@@ -1,5 +1,5 @@
-import Footer from "@/components/shared/footer";
-import Navbar from "@/components/shared/navbar";
+import { Footer } from "@/components/shared/footer";
+import { Navbar } from "@/components/shared/navbar";
 
 const ProviderLayout = ({ children }: { children: React.ReactNode }) => {
     return (
