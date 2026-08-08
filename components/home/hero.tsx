@@ -32,7 +32,7 @@ export function Hero() {
 
         {/* Subheading */}
         <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
-          From camping tents to cycling gear — browse thousands of items from
+          From camping tents to cycling gear browse thousands of items from
           trusted local providers. Rent by the day, week, or month.
         </p>
 
@@ -67,7 +67,7 @@ export function Hero() {
             <span>active users</span>
           </div>
           <div className="h-4 w-px bg-border hidden sm:block" />
-          <div className="flex items-center gap-2 text-sm text-muted-foreground hidden sm:flex">
+          <div className="items-center gap-2 text-sm text-muted-foreground hidden sm:flex">
             <Package className="size-4" />
             <span className="font-medium">2,500+</span>
             <span>gear listed</span>
