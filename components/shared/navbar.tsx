@@ -1,7 +1,9 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { LayoutDashboard, LogOut, User } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Dumbbell, LayoutDashboard, LogOut, User, Shield, Store, Sun, Moon, Monitor } from "lucide-react"
+import toast from "react-hot-toast"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -18,153 +20,152 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useTheme } from "@/components/shared/theme-provider"
+import { logout } from "@/service/logout"
+import type { ApiResponse, UserProfile } from "@/lib/types"
 
-// Demo navigation links — replace hrefs/labels with your real routes later.
 const NAV_LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "Products", href: "#products" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "About", href: "#about" },
+  { label: "Home", href: "/" },
+  { label: "Browse Gear", href: "/gear" },
+  { label: "Categories", href: "/gear#categories" },
 ]
 
-// Demo user — wire this up to your real auth/session later.
-const DEMO_USER = {
-  name: "Jane Doe",
-  email: "jane@example.com",
-  avatar: "",
+const ROLE_DASHBOARD: Record<string, { label: string; href: string; icon: typeof LayoutDashboard }> = {
+  CUSTOMER: { label: "My Rentals", href: "/dashboard/customer", icon: LayoutDashboard },
+  PROVIDER: { label: "Provider Dashboard", href: "/dashboard/provider", icon: Store },
+  ADMIN: { label: "Admin Dashboard", href: "/dashboard/admin", icon: Shield },
 }
 
-export function Navbar() {
-  // Demo auth state. Swap this for your real session check later.
-  const [isLoggedIn, setIsLoggedIn] = useState(true)
-  // Controls the hover-triggered profile menu.
-  const [menuOpen, setMenuOpen] = useState(false)
-  // Small delay so moving the cursor across the gap to the menu doesn't close it.
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+const THEME_OPTIONS = [
+  { value: "light" as const, label: "Light", icon: Sun },
+  { value: "dark" as const, label: "Dark", icon: Moon },
+  { value: "system" as const, label: "System", icon: Monitor },
+]
 
-  const openMenu = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current)
-    setMenuOpen(true)
+export function Navbar({ user }: { user: ApiResponse<UserProfile> | null }) {
+  const router = useRouter()
+  const { theme, setTheme, resolvedTheme } = useTheme()
+
+  const isLoggedIn = user?.success ?? false
+  const profile = user?.data
+  const dashboard = profile ? ROLE_DASHBOARD[profile.role] : null
+
+  const initials = profile?.name
+    ? profile.name.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase()
+    : "?"
+
+  const handleLogout = async () => {
+    await logout()
+    toast.success("Logged out successfully!")
+    router.push("/login")
   }
-
-  const scheduleClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current)
-    closeTimer.current = setTimeout(() => setMenuOpen(false), 120)
-  }
-
-  const initials = DEMO_USER.name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        {/* Left: text logo */}
-        <a
-          href="#home"
-          className="text-lg font-semibold tracking-tight text-foreground"
-        >
-          Acme<span className="text-primary">.</span>
-        </a>
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight text-foreground transition-opacity hover:opacity-80">
+          <Dumbbell className="size-5 text-primary" />
+          GearUp<span className="text-primary">.</span>
+        </Link>
 
-        {/* Middle: nav links */}
+        {/* Nav links */}
         <ul className="hidden items-center gap-1 md:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
-              <a
+              <Link
                 href={link.href}
                 className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
 
-        {/* Right: conditional auth area */}
-        <div className="flex items-center gap-2">
-          {/* Demo toggle so you can preview both states. Remove later. */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs text-muted-foreground"
-            onClick={() => setIsLoggedIn((prev) => !prev)}
-          >
-            {isLoggedIn ? "Demo: log out" : "Demo: log in"}
-          </Button>
+        {/* Auth area */}
+        <div className="flex items-center gap-1.5">
+          {/* Theme changer */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="size-9" aria-label="Change theme">
+                {resolvedTheme === "dark" ? (
+                  <Moon className="size-4" />
+                ) : (
+                  <Sun className="size-4" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" sideOffset={4}>
+              {THEME_OPTIONS.map((opt) => (
+                <DropdownMenuItem
+                  key={opt.value}
+                  onClick={() => setTheme(opt.value)}
+                  className={theme === opt.value ? "bg-accent" : ""}
+                >
+                  <opt.icon className="size-4" />
+                  {opt.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-          {isLoggedIn ? (
-            <DropdownMenu
-              open={menuOpen}
-              onOpenChange={setMenuOpen}
-              modal={false}
-            >
-              <div onMouseEnter={openMenu} onMouseLeave={scheduleClose}>
-                <DropdownMenuTrigger
-                  className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  aria-label="Open profile menu"
-                >
-                  <Avatar className="size-9 border border-border">
-                    <AvatarImage
-                      src={DEMO_USER.avatar || "/placeholder.svg"}
-                      alt={DEMO_USER.name}
-                    />
-                    <AvatarFallback>{initials}</AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  sideOffset={4}
-                  className="w-56"
-                  onMouseEnter={openMenu}
-                  onMouseLeave={scheduleClose}
-                  onCloseAutoFocus={(e) => e.preventDefault()}
-                >
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className="flex flex-col gap-0.5">
-                      <span className="text-sm font-medium">
-                        {DEMO_USER.name}
-                      </span>
-                      <span className="text-xs font-normal text-muted-foreground">
-                        {DEMO_USER.email}
-                      </span>
-                    </DropdownMenuLabel>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
+          {isLoggedIn && profile ? (
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger
+                className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                aria-label="Open profile menu"
+              >
+                <Avatar className="size-9 border border-border">
+                  <AvatarImage src={profile.profile?.profile_picture || ""} alt={profile.name} />
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" sideOffset={4} className="w-56">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="flex flex-col gap-0.5">
+                    <span className="text-sm font-medium">{profile.name}</span>
+                    <span className="text-xs font-normal text-muted-foreground">
+                      {profile.email}
+                    </span>
+                    <span className="mt-1 inline-flex w-fit items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                      {profile.role}
+                    </span>
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                {dashboard && (
                   <DropdownMenuItem asChild className="cursor-pointer">
-                    <a href="#dashboard">
-                      <LayoutDashboard className="size-4" />
-                      Dashboard
-                    </a>
+                    <Link href={dashboard.href}>
+                      <dashboard.icon className="size-4" />
+                      {dashboard.label}
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer">
-                    <a href="#profile">
-                      <User className="size-4" />
-                      Profile
-                    </a>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    variant="destructive"
-                    className="cursor-pointer"
-                    onClick={() => setIsLoggedIn(false)}
-                  >
-                    <LogOut className="size-4" />
-                    Log out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </div>
+                )}
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link href="/profile">
+                    <User className="size-4" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  variant="destructive"
+                  className="cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="size-4" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-2">
               <Button variant="ghost" asChild>
-                <a href="#signin">Sign in</a>
+                <Link href="/login">Sign in</Link>
               </Button>
               <Button asChild>
-                <a href="#signup">Sign up</a>
+                <Link href="/register">Sign up</Link>
               </Button>
             </div>
           )}

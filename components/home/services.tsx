@@ -15,6 +15,7 @@ import {
   ArrowRight,
 } from "lucide-react"
 import Image from "next/image"
+import { api } from "@/service/api"
 
 const categoryStyles: Record<
   string,
@@ -89,17 +90,10 @@ export function Services() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          "https://gearup-backend.vercel.app/api/category"
-        )
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories")
+        const res = await api<Category[]>("/api/category")
+        if (res.success) {
+          setCategories(res.data)
         }
-
-        const result = await response.json()
-
-        setCategories(result.data)
       } catch (error) {
         console.error("Error fetching categories:", error)
       } finally {

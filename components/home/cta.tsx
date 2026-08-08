@@ -42,10 +42,10 @@ export function Cta() {
                 asChild
                 className="group gap-2 px-8 text-base shadow-lg transition-all hover:shadow-xl"
               >
-                <a href="/register">
+                <Link href="/register">
                   Create Free Account
                   <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </a>
+                </Link>
               </Button>
               <Button
                 size="lg"
