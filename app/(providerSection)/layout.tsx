@@ -8,7 +8,7 @@ const ProviderLayout = async ({ children }: { children: React.ReactNode }) => {
     return (
         <>
         <Navbar user={user}/>
-        <div className="flex min-h-screen flex-col">{children}</div>
+        <div className="flex flex-1 flex-col overflow-hidden">{children}</div>
         <Footer/>
         </>
     )
