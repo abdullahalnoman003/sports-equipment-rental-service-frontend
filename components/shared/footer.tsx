@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { Dumbbell } from "lucide-react"
 import {
@@ -9,8 +8,7 @@ import {
   FaXTwitter,
   FaLinkedinIn,
 } from "react-icons/fa6"
-import { FiMapPin, FiMail, FiPhone, FiArrowRight } from "react-icons/fi"
-import { Button } from "@/components/ui/button"
+import { FiMapPin, FiMail, FiPhone } from "react-icons/fi"
 
 type LinkItem = { label: string; href: string }
 
@@ -19,9 +17,8 @@ const linkColumns: { title: string; links: LinkItem[] }[] = [
     title: "For Customers",
     links: [
       { label: "Browse Gear", href: "/gear" },
-      { label: "How It Works", href: "/how-it-works" },
       { label: "My Rentals", href: "/dashboard/customer" },
-      { label: "Payment Info", href: "/dashboard/customer/payments" },
+      { label: "Payment History", href: "/dashboard/customer/payments" },
     ],
   },
   {
@@ -30,16 +27,6 @@ const linkColumns: { title: string; links: LinkItem[] }[] = [
       { label: "List Your Gear", href: "/register" },
       { label: "Provider Dashboard", href: "/dashboard/provider" },
       { label: "Manage Orders", href: "/dashboard/provider/orders" },
-      { label: "Payout Details", href: "/dashboard/provider" },
-    ],
-  },
-  {
-    title: "Platform",
-    links: [
-      { label: "Admin Panel", href: "/dashboard/admin" },
-      { label: "Categories", href: "/gear" },
-      { label: "Help Center", href: "/help" },
-      { label: "Report an Issue", href: "/contact" },
     ],
   },
   {
@@ -47,7 +34,6 @@ const linkColumns: { title: string; links: LinkItem[] }[] = [
     links: [
       { label: "About Us", href: "/about" },
       { label: "Contact", href: "/contact" },
-      { label: "Careers", href: "/careers" },
       { label: "Terms & Privacy", href: "/terms" },
     ],
   },
@@ -61,18 +47,11 @@ const socials = [
 ]
 
 export function Footer() {
-  const [email, setEmail] = useState("")
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault()
-    setEmail("")
-  }
-
   return (
     <footer className="border-t border-border bg-card text-card-foreground">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_2.6fr]">
-          {/* Brand + newsletter */}
+          {/* Brand + contact */}
           <div className="max-w-sm">
             <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight">
               <Dumbbell className="size-5 text-primary" />
@@ -83,26 +62,6 @@ export function Footer() {
               marketplace. Rent what you need, earn from what you own — all in one
               trusted platform.
             </p>
-
-            <form onSubmit={handleSubscribe} className="mt-6">
-              <label htmlFor="footer-newsletter" className="text-sm font-medium">
-                Stay in the loop
-              </label>
-              <div className="mt-2 flex gap-2">
-                <input
-                  id="footer-newsletter"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                />
-                <Button type="submit" aria-label="Subscribe" className="shrink-0">
-                  <FiArrowRight className="size-4" />
-                </Button>
-              </div>
-            </form>
 
             <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
               <li className="flex items-center gap-2">
@@ -125,7 +84,7 @@ export function Footer() {
           </div>
 
           {/* Link columns */}
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             {linkColumns.map((col) => (
               <nav key={col.title} aria-label={col.title}>
                 <h3 className="text-sm font-semibold">{col.title}</h3>

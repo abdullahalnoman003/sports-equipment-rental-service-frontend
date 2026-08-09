@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Dumbbell, LayoutDashboard, LogOut, User, Shield, Store, Sun, Moon, Monitor } from "lucide-react"
+import { useRouter, usePathname } from "next/navigation"
+import { useState } from "react"
+import { Dumbbell, LayoutDashboard, LogOut, User, Shield, Store, Sun, Moon, Monitor, Menu, X } from "lucide-react"
 import toast from "react-hot-toast"
 
 import { Button } from "@/components/ui/button"
@@ -27,7 +28,7 @@ import type { ApiResponse, UserProfile } from "@/lib/types"
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Browse Gear", href: "/gear" },
-  { label: "Categories", href: "/gear#categories" },
+  { label: "About", href: "/about" },
 ]
 
 const ROLE_DASHBOARD: Record<string, { label: string; href: string; icon: typeof LayoutDashboard }> = {
@@ -44,7 +45,9 @@ const THEME_OPTIONS = [
 
 export function Navbar({ user }: { user: ApiResponse<UserProfile> | null }) {
   const router = useRouter()
+  const pathname = usePathname()
   const { theme, setTheme, resolvedTheme } = useTheme()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const isLoggedIn = user?.success ?? false
   const profile = user?.data
@@ -58,6 +61,12 @@ export function Navbar({ user }: { user: ApiResponse<UserProfile> | null }) {
     await logout()
     toast.success("Logged out successfully!")
     router.push("/login")
+    setMobileOpen(false)
+  }
+
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/"
+    return pathname.startsWith(href)
   }
 
   return (
@@ -69,13 +78,17 @@ export function Navbar({ user }: { user: ApiResponse<UserProfile> | null }) {
           GearUp<span className="text-primary">.</span>
         </Link>
 
-        {/* Nav links */}
+        {/* Desktop nav links */}
         <ul className="hidden items-center gap-1 md:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive(link.href)
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
               >
                 {link.label}
               </Link>
@@ -83,9 +96,8 @@ export function Navbar({ user }: { user: ApiResponse<UserProfile> | null }) {
           ))}
         </ul>
 
-        {/* Auth area */}
-        <div className="flex items-center gap-1.5">
-          {/* Theme changer */}
+        {/* Desktop auth area */}
+        <div className="hidden items-center gap-1.5 md:flex">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="size-9" aria-label="Change theme">
@@ -170,7 +182,97 @@ export function Navbar({ user }: { user: ApiResponse<UserProfile> | null }) {
             </div>
           )}
         </div>
+
+        {/* Mobile menu button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-9 md:hidden"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+        >
+          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+        </Button>
       </nav>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="border-t border-border bg-background md:hidden">
+          <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
+            <ul className="space-y-1">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive(link.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              {isLoggedIn && dashboard && (
+                <li>
+                  <Link
+                    href={dashboard.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive(dashboard.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    }`}
+                  >
+                    {dashboard.label}
+                  </Link>
+                </li>
+              )}
+            </ul>
+
+            <div className="mt-4 border-t border-border pt-4">
+              {isLoggedIn && profile ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 px-3">
+                    <Avatar className="size-9 border border-border">
+                      <AvatarImage src={profile.profile?.profile_picture || ""} alt={profile.name} />
+                      <AvatarFallback>{initials}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium">{profile.name}</p>
+                      <p className="text-xs text-muted-foreground">{profile.email}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-md px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full rounded-md px-3 py-2.5 text-left text-sm font-medium text-destructive hover:bg-destructive/10"
+                  >
+                    Log out
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Button variant="outline" asChild className="flex-1">
+                    <Link href="/login" onClick={() => setMobileOpen(false)}>Sign in</Link>
+                  </Button>
+                  <Button asChild className="flex-1">
+                    <Link href="/register" onClick={() => setMobileOpen(false)}>Sign up</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   )
 }
