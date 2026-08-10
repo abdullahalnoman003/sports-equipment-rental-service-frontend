@@ -3,6 +3,11 @@
 import { getToken } from "@/lib/get-token"
 import { api } from "@/service/api"
 
+export async function fetchAllCategories() {
+  const categories = await api("/api/category")
+  return categories
+}
+
 export async function createCategory(data: {
   name: string
   description: string
