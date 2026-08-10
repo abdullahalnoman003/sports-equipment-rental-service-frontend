@@ -3,18 +3,25 @@
 import { getToken } from "@/lib/get-token"
 import { api } from "@/service/api"
 
-export async function fetchMyRentals() {
+interface FetchOptions {
+  next?: {
+    revalidate?: number | false
+    tags?: string[]
+  }
+}
+
+export async function fetchMyRentals(options?: FetchOptions) {
   const token = await getToken()
 
-  const rentals = await api("/api/rental/get-rentals", undefined, token)
+  const rentals = await api("/api/rental/get-rentals", { next: options?.next }, token)
 
   return rentals
 }
 
-export async function fetchRentalDetails(id: string) {
+export async function fetchRentalDetails(id: string, options?: FetchOptions) {
   const token = await getToken()
 
-  const rental = await api(`/api/rental/get-rentals/${id}`, undefined, token)
+  const rental = await api(`/api/rental/get-rentals/${id}`, { next: options?.next }, token)
 
   return rental
 }
@@ -36,8 +43,8 @@ export async function createPaymentSession(rentalId: string) {
 
 export async function submitReview(data: {
   rentalId: string
-  comment: string
   rating: number
+  comment?: string
 }) {
   const token = await getToken()
 

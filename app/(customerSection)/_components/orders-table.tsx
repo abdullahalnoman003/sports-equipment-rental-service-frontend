@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Package } from "lucide-react"
+import { Package, ChevronLeft, ChevronRight } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -30,6 +31,8 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELED: "bg-red-100 text-red-700",
 }
 
+const ITEMS_PER_PAGE = 10
+
 interface OrdersTableProps {
   orders: Rental[]
   onPay?: (orderId: string) => void
@@ -39,10 +42,24 @@ interface OrdersTableProps {
 export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
   const [filter, setFilter] = useState<string>("ALL")
   const [search, setSearch] = useState("")
+  const [page, setPage] = useState(1)
 
   const filtered = orders
     .filter((o) => filter === "ALL" || o.status === filter)
     .filter((o) => o.gear.name.toLowerCase().includes(search.toLowerCase()))
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value)
+    setPage(1)
+  }
+
+  const handleFilterChange = (value: string) => {
+    setFilter(value)
+    setPage(1)
+  }
 
   return (
     <>
@@ -52,13 +69,13 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
             type="text"
             placeholder="Search gear..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9"
           />
           <Package className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         </div>
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-[180px]">
+        <Select value={filter} onValueChange={handleFilterChange}>
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="All Status" />
           </SelectTrigger>
           <SelectContent>
@@ -74,7 +91,7 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
-        <Table className="min-w-[600px]">
+        <Table className="min-w-150">
           <TableHeader>
             <TableRow className="bg-muted/50">
               <TableHead>Gear</TableHead>
@@ -85,7 +102,7 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((order) => {
+            {paged.map((order) => {
               const startDate = new Date(order.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
               const endDate = new Date(order.end_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
               return (
@@ -146,6 +163,35 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * ITEMS_PER_PAGE + 1} to {Math.min(page * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} orders
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   )
 }
