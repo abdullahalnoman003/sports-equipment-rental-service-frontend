@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Package } from "lucide-react"
+import { Search, Package, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
   Select,
@@ -30,6 +31,8 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELED: "bg-red-100 text-red-700",
 }
 
+const ITEMS_PER_PAGE = 10
+
 interface RentalsTableProps {
   rentals: Rental[]
 }
@@ -37,6 +40,7 @@ interface RentalsTableProps {
 export function RentalsTable({ rentals }: RentalsTableProps) {
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("ALL")
+  const [page, setPage] = useState(1)
 
   const filtered = rentals
     .filter((r) => statusFilter === "ALL" || r.status === statusFilter)
@@ -46,6 +50,19 @@ export function RentalsTable({ rentals }: RentalsTableProps) {
         r.gear.name.toLowerCase().includes(search.toLowerCase())
     )
 
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value)
+    setPage(1)
+  }
+
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value)
+    setPage(1)
+  }
+
   return (
     <div>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -54,11 +71,11 @@ export function RentalsTable({ rentals }: RentalsTableProps) {
           <Input
             placeholder="Search customer or gear..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9"
           />
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={statusFilter} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-full sm:w-44">
             <SelectValue placeholder="All Status" />
           </SelectTrigger>
@@ -86,7 +103,7 @@ export function RentalsTable({ rentals }: RentalsTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((rental) => {
+            {paged.map((rental) => {
               const startDate = new Date(rental.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
               const endDate = new Date(rental.end_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
               return (
@@ -121,6 +138,35 @@ export function RentalsTable({ rentals }: RentalsTableProps) {
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * ITEMS_PER_PAGE + 1} to {Math.min(page * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} rentals
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Plus, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -46,6 +46,32 @@ export function CategoriesTable() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      try {
+        const res = await fetchAllCategories()
+        if (!cancelled) {
+          if (res.success) {
+            setCategories(res.data as Category[])
+          } else {
+            setError(res.message || "Failed to fetch categories")
+            toast.error(res.message || "Failed to fetch categories")
+          }
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Failed to fetch categories")
+          toast.error("Failed to fetch categories")
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [])
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this category?")) return

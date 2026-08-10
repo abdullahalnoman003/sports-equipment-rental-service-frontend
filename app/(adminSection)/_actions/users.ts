@@ -3,10 +3,17 @@
 import { getToken } from "@/lib/get-token"
 import { api } from "@/service/api"
 
-export async function fetchAllUsers() {
+interface FetchOptions {
+  next?: {
+    revalidate?: number | false
+    tags?: string[]
+  }
+}
+
+export async function fetchAllUsers(options?: FetchOptions) {
   const token = await getToken()
 
-  const users = await api("/api/admin/users", undefined, token)
+  const users = await api("/api/admin/users", { next: options?.next }, token)
 
   return users
 }

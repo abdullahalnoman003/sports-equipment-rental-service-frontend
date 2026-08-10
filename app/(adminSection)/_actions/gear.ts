@@ -3,10 +3,17 @@
 import { getToken } from "@/lib/get-token"
 import { api } from "@/service/api"
 
-export async function fetchAllGear() {
+interface FetchOptions {
+  next?: {
+    revalidate?: number | false
+    tags?: string[]
+  }
+}
+
+export async function fetchAllGear(options?: FetchOptions) {
   const token = await getToken()
 
-  const gear = await api("/api/admin/gear", undefined, token)
+  const gear = await api("/api/admin/gear", { next: options?.next }, token)
 
   return gear
 }

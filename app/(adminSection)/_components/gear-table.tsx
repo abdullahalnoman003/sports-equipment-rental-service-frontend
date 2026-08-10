@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Search, Eye, Package } from "lucide-react"
+import { Search, Eye, Package, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/table"
 import type { Gear } from "@/lib/types"
 
+const ITEMS_PER_PAGE = 10
+
 interface GearTableProps {
   gear: Gear[]
 }
@@ -30,6 +32,7 @@ interface GearTableProps {
 export function GearTable({ gear }: GearTableProps) {
   const [search, setSearch] = useState("")
   const [catFilter, setCatFilter] = useState("ALL")
+  const [page, setPage] = useState(1)
 
   const categories = ["ALL", ...new Set(gear.map((g) => g.category_Name))]
 
@@ -41,6 +44,19 @@ export function GearTable({ gear }: GearTableProps) {
         g.brand.toLowerCase().includes(search.toLowerCase())
     )
 
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value)
+    setPage(1)
+  }
+
+  const handleCategoryChange = (value: string) => {
+    setCatFilter(value)
+    setPage(1)
+  }
+
   return (
     <div>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -49,11 +65,11 @@ export function GearTable({ gear }: GearTableProps) {
           <Input
             placeholder="Search gear..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9"
           />
         </div>
-        <Select value={catFilter} onValueChange={setCatFilter}>
+        <Select value={catFilter} onValueChange={handleCategoryChange}>
           <SelectTrigger className="w-full sm:w-48">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
@@ -80,7 +96,7 @@ export function GearTable({ gear }: GearTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((item) => (
+            {paged.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -117,6 +133,35 @@ export function GearTable({ gear }: GearTableProps) {
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * ITEMS_PER_PAGE + 1} to {Math.min(page * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} gear
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
