@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Package } from "lucide-react"
+import { Package, ChevronLeft, ChevronRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -10,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -35,8 +35,11 @@ const ALL_STATUSES = [
   { value: "CONFIRMED", label: "Confirmed" },
   { value: "PAID", label: "Paid" },
   { value: "PICKED_UP", label: "Picked Up" },
+  { value: "RETURNED", label: "Returned" },
   { value: "CANCELED", label: "Canceled" },
 ]
+
+const ITEMS_PER_PAGE = 10
 
 interface OrdersTableProps {
   orders: RentalWithPayment[]
@@ -48,8 +51,17 @@ export function OrdersTable({ orders: initialOrders, onStatusUpdate }: OrdersTab
   const [orders, setOrders] = useState(initialOrders)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [pendingStatus, setPendingStatus] = useState<Record<string, string>>({})
+  const [page, setPage] = useState(1)
 
   const filtered = orders.filter((o) => filter === "ALL" || o.status === filter)
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+
+  const handleFilterChange = (value: string) => {
+    setFilter(value)
+    setPage(1)
+  }
 
   const handleConfirm = (orderId: string) => {
     const newStatus = pendingStatus[orderId]
@@ -70,7 +82,7 @@ export function OrdersTable({ orders: initialOrders, onStatusUpdate }: OrdersTab
   return (
     <>
       <div className="mb-4 flex items-center gap-2">
-        <Select value={filter} onValueChange={setFilter}>
+        <Select value={filter} onValueChange={handleFilterChange}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="All Orders" />
           </SelectTrigger>
@@ -99,7 +111,7 @@ export function OrdersTable({ orders: initialOrders, onStatusUpdate }: OrdersTab
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.map((order) => {
+            {paged.map((order) => {
               const startDate = new Date(order.start_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
               const endDate = new Date(order.end_date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
               const isReturned = order.status === "RETURNED"
@@ -174,6 +186,35 @@ export function OrdersTable({ orders: initialOrders, onStatusUpdate }: OrdersTab
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * ITEMS_PER_PAGE + 1} to {Math.min(page * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} orders
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {page} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </>
   )
 }

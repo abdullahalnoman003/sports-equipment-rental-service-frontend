@@ -3,21 +3,25 @@
 import { getToken } from "@/lib/get-token"
 import { api } from "@/service/api"
 
-export async function fetchAllGear() {
-  const gear = await api("/api/gear")
+interface FetchOptions {
+  next?: {
+    revalidate?: number | false
+    tags?: string[]
+  }
+}
 
+export async function fetchAllGear(options?: FetchOptions) {
+  const gear = await api("/api/gear", { next: options?.next })
   return gear
 }
 
-export async function fetchGearById(id: string) {
-  const gear = await api(`/api/gear/${id}`)
-
+export async function fetchGearById(id: string, options?: FetchOptions) {
+  const gear = await api(`/api/gear/${id}`, { next: options?.next })
   return gear
 }
 
-export async function fetchAllCategories() {
-  const categories = await api("/api/category")
-
+export async function fetchAllCategories(options?: FetchOptions) {
+  const categories = await api("/api/category", { next: options?.next })
   return categories
 }
 

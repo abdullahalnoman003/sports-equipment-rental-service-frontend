@@ -51,11 +51,11 @@ const adminLinks: SidebarLink[] = [
 ]
 
 const staticLinks: SidebarLink[] = [
-  { label: "About", href: "/dashboard/about", icon: Info },
-  { label: "Contact", href: "/dashboard/contact", icon: Phone },
-  { label: "How It Works", href: "/dashboard/how-it-works", icon: BookOpen },
-  { label: "Help Center", href: "/dashboard/help", icon: HelpCircle },
-  { label: "Terms", href: "/dashboard/terms", icon: FileText },
+  { label: "About", href: "/about", icon: Info },
+  { label: "Contact", href: "/contact", icon: Phone },
+  { label: "How It Works", href: "/how-it-works", icon: BookOpen },
+  { label: "Help Center", href: "/help", icon: HelpCircle },
+  { label: "Terms", href: "/terms", icon: FileText },
 ]
 
 const roleIcons = { CUSTOMER: Package, PROVIDER: Store, ADMIN: Shield }

@@ -1,16 +1,17 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { EditGearForm } from "../../../../_components/edit-gear-form"
-import { fetchProviderGear } from "../../../../_actions/gear"
+import { fetchGearById } from "@/app/(publicSection)/_actions/gear"
 import toast from "react-hot-toast"
 import type { Gear } from "@/lib/types"
 
-export default function EditGearPage({ params }: { params: { id: string } }) {
+export default function EditGearPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   const [gear, setGear] = useState<Gear | null>(null)
   const [loading, setLoading] = useState(true)
@@ -18,18 +19,11 @@ export default function EditGearPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     async function fetchGear() {
       try {
-        const res = await fetchProviderGear()
+        const res = await fetchGearById(id)
         if (res.success) {
-          const allGear = res.data as Gear[]
-          const found = allGear.find((g) => g.id === params.id)
-          if (found) {
-            setGear(found)
-          } else {
-            toast.error("Gear not found")
-            router.push("/dashboard/provider/gear")
-          }
+          setGear(res.data as Gear)
         } else {
-          toast.error(res.message || "Failed to fetch gear")
+          toast.error(res.message || "Gear not found")
           router.push("/dashboard/provider/gear")
         }
       } catch {
@@ -40,7 +34,7 @@ export default function EditGearPage({ params }: { params: { id: string } }) {
       }
     }
     fetchGear()
-  }, [params.id, router])
+  }, [id, router])
 
   if (loading) {
     return (
@@ -81,7 +75,11 @@ export default function EditGearPage({ params }: { params: { id: string } }) {
             Update your gear listing details
           </p>
           <div className="mt-8">
-            <EditGearForm gear={gear} onSuccess={() => router.push("/dashboard/provider/gear")} />
+            <EditGearForm
+              gear={gear}
+              onSuccess={() => router.push("/dashboard/provider/gear")}
+              onCancel={() => router.push("/dashboard/provider/gear")}
+            />
           </div>
         </div>
       </div>

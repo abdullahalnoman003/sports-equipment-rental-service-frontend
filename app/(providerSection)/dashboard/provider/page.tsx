@@ -1,6 +1,3 @@
-"use client"
-
-import { useEffect, useState } from "react"
 import { Package, DollarSign, Clock, Plus } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -11,37 +8,21 @@ import { OrdersList } from "../../_components/orders-list"
 import { fetchProviderGear, fetchProviderOrders } from "../../_actions/gear"
 import { getMe } from "@/service/getMe"
 import type { Gear, RentalWithPayment } from "@/lib/types"
-import toast from "react-hot-toast"
 
-export default function ProviderDashboard() {
-  const [gear, setGear] = useState<Gear[]>([])
-  const [orders, setOrders] = useState<RentalWithPayment[]>([])
-  const [loading, setLoading] = useState(true)
+export const revalidate = 30
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const userRes = await getMe()
-        const userEmail = userRes.success ? (userRes.data as { email: string }).email : ""
+export default async function ProviderDashboard() {
+  const userRes = await getMe()
+  const userEmail = userRes.success ? (userRes.data as { email: string }).email : ""
 
-        const [gearRes, ordersRes] = await Promise.all([
-          fetchProviderGear(),
-          fetchProviderOrders(),
-        ])
+  const [gearRes, ordersRes] = await Promise.all([
+    fetchProviderGear({ next: { revalidate: 30 } }),
+    fetchProviderOrders({ next: { revalidate: 30 } }),
+  ])
 
-        if (gearRes.success) {
-          const allGear = gearRes.data as Gear[]
-          setGear(userEmail ? allGear.filter((g) => g.provider_email === userEmail) : allGear)
-        }
-        if (ordersRes.success) setOrders(ordersRes.data as RentalWithPayment[])
-      } catch {
-        toast.error("Failed to fetch dashboard data")
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [])
+  const allGear = gearRes.success ? (gearRes.data as Gear[]) : []
+  const gear = userEmail ? allGear.filter((g) => g.provider_email === userEmail) : allGear
+  const orders = ordersRes.success ? (ordersRes.data as RentalWithPayment[]) : []
 
   const stats = [
     { label: "Total Gear Listed", value: String(gear.length), icon: Package, color: "text-blue-600 bg-blue-100" },
@@ -62,42 +43,27 @@ export default function ProviderDashboard() {
 
   return (
     <DashboardLayout role="PROVIDER">
-      {loading ? (
-        <div className="space-y-6">
-          <div className="h-8 w-48 animate-pulse rounded bg-muted" />
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-24 animate-pulse rounded-xl border border-border bg-card" />
-            ))}
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Provider Dashboard</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Manage your gear inventory and rental orders
+            </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="h-64 animate-pulse rounded-xl border border-border bg-card" />
-            <div className="h-64 animate-pulse rounded-xl border border-border bg-card" />
-          </div>
+          <Button asChild>
+            <Link href="/dashboard/provider/gear/new">
+              <Plus className="size-4" />
+              Add Gear
+            </Link>
+          </Button>
         </div>
-      ) : (
-        <div className="space-y-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Provider Dashboard</h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Manage your gear inventory and rental orders
-              </p>
-            </div>
-            <Button asChild>
-              <Link href="/dashboard/provider/gear/new">
-                <Plus className="size-4" />
-                Add Gear
-              </Link>
-            </Button>
-          </div>
-          <StatsCards stats={stats} />
-          <div className="grid gap-6 md:grid-cols-2">
-            <GearList gear={recentGear} />
-            <OrdersList orders={recentOrders} />
-          </div>
+        <StatsCards stats={stats} />
+        <div className="grid gap-6 md:grid-cols-2">
+          <GearList gear={recentGear} />
+          <OrdersList orders={recentOrders} />
         </div>
-      )}
+      </div>
     </DashboardLayout>
   )
 }

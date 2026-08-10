@@ -3,6 +3,13 @@
 import { getToken } from "@/lib/get-token"
 import { api } from "@/service/api"
 
+interface FetchOptions {
+  next?: {
+    revalidate?: number | false
+    tags?: string[]
+  }
+}
+
 export async function addNewGear(data: {
   name: string
   description: string
@@ -53,18 +60,18 @@ export async function removeGearById(id: string) {
   return result
 }
 
-export async function fetchProviderGear() {
+export async function fetchProviderGear(options?: FetchOptions) {
   const token = await getToken()
 
-  const gear = await api("/api/provider/gear/getallgear", undefined, token)
+  const gear = await api("/api/provider/gear/getallgear", { next: options?.next }, token)
 
   return gear
 }
 
-export async function fetchProviderOrders() {
+export async function fetchProviderOrders(options?: FetchOptions) {
   const token = await getToken()
 
-  const orders = await api("/api/provider/orders/", undefined, token)
+  const orders = await api("/api/provider/orders/", { next: options?.next }, token)
 
   return orders
 }
