@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Package, ChevronLeft, ChevronRight } from "lucide-react"
+import { Package, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -33,6 +33,19 @@ const STATUS_COLORS: Record<string, string> = {
 
 const ITEMS_PER_PAGE = 10
 
+function getPageItems(current: number, total: number): (number | "ellipsis")[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+  if (current <= 4) {
+    return [1, 2, 3, 4, 5, "ellipsis", total]
+  }
+  if (current >= total - 3) {
+    return [1, "ellipsis", total - 4, total - 3, total - 2, total - 1, total]
+  }
+  return [1, "ellipsis", current - 1, current, current + 1, "ellipsis", total]
+}
+
 interface OrdersTableProps {
   orders: Rental[]
   onPay?: (orderId: string) => void
@@ -48,8 +61,9 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
     .filter((o) => filter === "ALL" || o.status === filter)
     .filter((o) => o.gear.name.toLowerCase().includes(search.toLowerCase()))
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
-  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
+  const currentPage = Math.min(page, totalPages)
+  const paged = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   const handleSearchChange = (value: string) => {
     setSearch(value)
@@ -165,27 +179,49 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            Showing {(page - 1) * ITEMS_PER_PAGE + 1} to {Math.min(page * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} orders
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} orders
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button
               variant="outline"
               size="icon"
-              disabled={page === 1}
-              onClick={() => setPage(page - 1)}
+              disabled={currentPage === 1}
+              onClick={() => setPage(currentPage - 1)}
+              aria-label="Previous page"
             >
               <ChevronLeft className="size-4" />
             </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {page} of {totalPages}
-            </span>
+
+            {getPageItems(currentPage, totalPages).map((item, i) =>
+              item === "ellipsis" ? (
+                <span
+                  key={`ellipsis-${i}`}
+                  className="flex size-9 items-center justify-center text-muted-foreground"
+                  aria-hidden
+                >
+                  <MoreHorizontal className="size-4" />
+                </span>
+              ) : (
+                <Button
+                  key={item}
+                  variant={item === currentPage ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setPage(item)}
+                  aria-current={item === currentPage ? "page" : undefined}
+                >
+                  {item}
+                </Button>
+              )
+            )}
+
             <Button
               variant="outline"
               size="icon"
-              disabled={page === totalPages}
-              onClick={() => setPage(page + 1)}
+              disabled={currentPage === totalPages}
+              onClick={() => setPage(currentPage + 1)}
+              aria-label="Next page"
             >
               <ChevronRight className="size-4" />
             </Button>
