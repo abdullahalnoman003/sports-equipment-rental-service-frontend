@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Package, ChevronLeft, ChevronRight } from "lucide-react"
 import { GearFilters } from "./gear-filters"
 import { GearCard } from "./gear-card"
@@ -12,11 +13,15 @@ const ITEMS_PER_PAGE = 9
 interface GearClientProps {
   gear: Gear[]
   categories: string[]
+  initialCategory?: string
 }
 
-export function GearClient({ gear, categories }: GearClientProps) {
+export function GearClient({ gear, categories, initialCategory }: GearClientProps) {
+  const router = useRouter()
   const [search, setSearch] = useState("")
-  const [category, setCategory] = useState("All")
+  const [category, setCategory] = useState(
+    initialCategory && initialCategory !== "All" ? initialCategory : "All"
+  )
   const [sortBy, setSortBy] = useState<"name" | "price-low" | "price-high">("name")
   const [page, setPage] = useState(1)
 
@@ -42,6 +47,15 @@ export function GearClient({ gear, categories }: GearClientProps) {
   function handleCategoryChange(value: string) {
     setCategory(value)
     setPage(1)
+
+    const params = new URLSearchParams(window.location.search)
+    if (value === "All") {
+      params.delete("category")
+    } else {
+      params.set("category", value)
+    }
+    const qs = params.toString()
+    router.replace(qs ? `/gear?${qs}` : "/gear", { scroll: false })
   }
 
   function handleSortChange(value: "name" | "price-low" | "price-high") {
