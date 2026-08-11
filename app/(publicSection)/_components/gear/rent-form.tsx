@@ -69,7 +69,7 @@ export function RentForm({ gear }: RentFormProps) {
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
       <div className="mb-4">
-        <span className="text-3xl font-bold text-primary">${gear.price}</span>
+        <span className="text-3xl font-bold text-primary">৳{gear.price}</span>
         <span className="text-muted-foreground"> / day</span>
       </div>
 
@@ -113,13 +113,13 @@ export function RentForm({ gear }: RentFormProps) {
         <div className="mt-4 space-y-2 border-t border-border pt-4">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">
-              ${gear.price} x {days} day{days > 1 ? "s" : ""}
+              ৳{gear.price} x {days} day{days > 1 ? "s" : ""}
             </span>
-            <span className="font-medium">${total}</span>
+            <span className="font-medium">৳{total}</span>
           </div>
           <div className="flex justify-between border-t border-border pt-2 text-sm font-semibold">
             <span>Total</span>
-            <span className="text-primary">${total}</span>
+            <span className="text-primary">৳{total}</span>
           </div>
         </div>
       )}

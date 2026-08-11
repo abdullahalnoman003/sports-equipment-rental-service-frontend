@@ -8,7 +8,9 @@ export const revalidate = 60
 
 export default async function AdminRentalsPage() {
   const res = await fetchAllRentals({ next: { revalidate: 60 } })
-  const rentals = res.success ? (res.data as Rental[]) : []
+  const rentals = (res.success ? (res.data as Rental[]) : []).sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  )
 
   const totals = {
     all: rentals.length,

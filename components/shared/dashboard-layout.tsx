@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import { logout } from "@/service/logout"
 import toast from "react-hot-toast"
+import type { Role } from "@/lib/types"
 
 interface SidebarLink {
   label: string
@@ -65,7 +66,7 @@ export function DashboardLayout({
   role = "CUSTOMER",
   children,
 }: {
-  role?: string
+  role?: Role
   children: React.ReactNode
 }) {
   const pathname = usePathname()

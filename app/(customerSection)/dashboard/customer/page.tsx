@@ -1,6 +1,6 @@
 import { Package, CreditCard, Clock, TrendingUp } from "lucide-react"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
-import { StatsCards } from "../../_components/stats-cards"
+import { StatsCards } from "@/components/shared/stats-cards"
 import { RecentRentals } from "../../_components/recent-rentals"
 import { fetchMyRentals } from "../../_actions/orders"
 import { fetchPaymentHistory } from "../../_actions/payments"
@@ -79,7 +79,7 @@ export default async function CustomerDashboard() {
                         }`}>
                           {payment.status}
                         </span>
-                        <p className="text-sm font-semibold">${payment.amount}</p>
+                         <p className="text-sm font-semibold">৳{payment.amount}</p>
                       </div>
                     </div>
                   ))}

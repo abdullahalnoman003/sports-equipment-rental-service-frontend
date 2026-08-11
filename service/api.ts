@@ -23,7 +23,27 @@ async function api<T>(path: string, options?: ApiFetchOptions, token?: string | 
     headers,
     ...(next ? { next } : {}),
   })
-  return res.json()
+
+  if (!res.ok) {
+    let message = `HTTP ${res.status}`
+    try {
+      const err = await res.json()
+      if (typeof err.message === "string") message = err.message
+    } catch {
+      try {
+        message = await res.text()
+      } catch {
+        message = `HTTP ${res.status}`
+      }
+    }
+    return { success: false, statusCode: res.status, message, data: null as unknown as T }
+  }
+
+  try {
+    return await res.json()
+  } catch {
+    return { success: false, statusCode: res.status, message: "Invalid response from server", data: null as unknown as T }
+  }
 }
 
 export { api }

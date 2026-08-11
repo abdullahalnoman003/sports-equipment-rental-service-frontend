@@ -87,7 +87,7 @@ export function GearTable({ gear, onEdit, onDelete }: GearTableProps) {
                   </div>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{gear.category_Name}</TableCell>
-                <TableCell className="font-medium">${gear.price}</TableCell>
+                <TableCell className="font-medium">৳{gear.price}</TableCell>
                 <TableCell className="text-muted-foreground">{gear.quantity}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>

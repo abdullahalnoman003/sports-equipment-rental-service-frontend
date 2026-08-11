@@ -72,7 +72,7 @@ export function PaymentsTable({ payments }: PaymentsTableProps) {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right font-medium">
-                  ${payment.amount}
+                  ৳{payment.amount}
                 </TableCell>
               </TableRow>
             ))}

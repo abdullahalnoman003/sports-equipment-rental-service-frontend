@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { type LucideIcon } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 interface Stat {
   label: string

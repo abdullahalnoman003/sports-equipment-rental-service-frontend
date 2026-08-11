@@ -1,8 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Package } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import type { Gear } from "@/lib/types"
@@ -13,7 +13,7 @@ export interface GearCardProps {
 
 export function GearCard({ gear }: GearCardProps) {
   const [imgError, setImgError] = useState(false)
-  const hasImage = gear.image && !imgError
+  const hasImage = gear.image && !imgError && (gear.image.startsWith("http://") || gear.image.startsWith("https://"))
 
   return (
     <Link
@@ -23,10 +23,11 @@ export function GearCard({ gear }: GearCardProps) {
       {/* Image area */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted/50">
         {hasImage ? (
-          <img
+          <Image
             src={gear.image!}
             alt={gear.name}
-            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
             onError={() => setImgError(true)}
           />
         ) : (
@@ -68,8 +69,8 @@ export function GearCard({ gear }: GearCardProps) {
         </p>
 
         <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
-          <span className="text-lg font-bold text-primary">
-            ${gear.price}
+             <span className="text-lg font-bold text-primary">
+             ৳{gear.price}
             <span className="text-xs font-normal text-muted-foreground">/day</span>
           </span>
           <span className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary">

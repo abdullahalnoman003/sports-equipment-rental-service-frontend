@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,8 +16,19 @@ import {
 } from "@/components/ui/select"
 import { addNewGear } from "../_actions/gear"
 import { fetchAllCategories } from "@/app/(publicSection)/_actions/gear"
+import { z } from "zod"
 import toast from "react-hot-toast"
 import type { Category } from "@/lib/types"
+
+const gearSchema = z.object({
+  name: z.string().min(1, "Gear name is required"),
+  description: z.string().min(1, "Description is required"),
+  image: z.string().url("Invalid image URL").optional().or(z.literal("")),
+  price: z.number().positive("Price must be greater than 0"),
+  quantity: z.number().int("Quantity must be a whole number").positive("Quantity must be greater than 0"),
+  brand: z.string().min(1, "Brand is required"),
+  category_name: z.string().min(1, "Category is required"),
+})
 
 interface GearForm {
   name: string
@@ -49,6 +60,7 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
   const [form, setForm] = useState<GearForm>(INITIAL_FORM)
   const [categories, setCategories] = useState<string[]>([])
   const [imageError, setImageError] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     async function fetchCategories() {
@@ -63,10 +75,35 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
   const handleChange = (field: keyof GearForm, value: string) => {
     setForm((f) => ({ ...f, [field]: value }))
     if (field === "image") setImageError(false)
+    setErrors((prev) => {
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
+  const validate = () => {
+    const result = gearSchema.safeParse({
+      ...form,
+      price: Number(form.price),
+      quantity: Number(form.quantity),
+    })
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {}
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof GearForm
+        fieldErrors[field] = issue.message
+      }
+      setErrors(fieldErrors)
+      return false
+    }
+    setErrors({})
+    return true
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!validate()) return
     setLoading(true)
 
     try {
@@ -108,11 +145,12 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
             />
           </div>
           <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-muted/50">
-            {form.image && !imageError ? (
-              <img
+            {form.image && !imageError && (form.image.startsWith("http://") || form.image.startsWith("https://")) ? (
+              <Image
                 src={form.image}
                 alt="Gear preview"
-                className="size-full object-cover"
+                fill
+                className="object-cover"
                 onError={() => setImageError(true)}
               />
             ) : (
@@ -134,7 +172,9 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
             value={form.name}
             onChange={(e) => handleChange("name", e.target.value)}
             placeholder="e.g. Mountain Bike Pro"
+            className={errors.name ? "border-destructive" : ""}
           />
+          {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
         </div>
         <div className="space-y-2">
           <Label htmlFor="brand">Brand *</Label>
@@ -144,25 +184,29 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
             value={form.brand}
             onChange={(e) => handleChange("brand", e.target.value)}
             placeholder="e.g. Trek"
+            className={errors.brand ? "border-destructive" : ""}
           />
+          {errors.brand && <p className="text-xs text-destructive">{errors.brand}</p>}
         </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="description">Description *</Label>
-        <Textarea
-          id="description"
-          required
-          rows={4}
-          value={form.description}
-          onChange={(e) => handleChange("description", e.target.value)}
-          placeholder="Describe your gear — condition, features, what's included..."
-        />
+          <Textarea
+            id="description"
+            required
+            rows={4}
+            value={form.description}
+            onChange={(e) => handleChange("description", e.target.value)}
+            placeholder="Describe your gear — condition, features, what's included..."
+            className={errors.description ? "border-destructive" : ""}
+          />
+          {errors.description && <p className="text-xs text-destructive">{errors.description}</p>}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-2">
-          <Label htmlFor="price">Price/Day ($) *</Label>
+          <Label htmlFor="price">Price/Day (৳) *</Label>
           <Input
             id="price"
             type="number"
@@ -171,7 +215,9 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
             value={form.price}
             onChange={(e) => handleChange("price", e.target.value)}
             placeholder="45"
+            className={errors.price ? "border-destructive" : ""}
           />
+          {errors.price && <p className="text-xs text-destructive">{errors.price}</p>}
         </div>
         <div className="space-y-2">
           <Label htmlFor="quantity">Quantity *</Label>
@@ -183,7 +229,9 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
             value={form.quantity}
             onChange={(e) => handleChange("quantity", e.target.value)}
             placeholder="3"
+            className={errors.quantity ? "border-destructive" : ""}
           />
+          {errors.quantity && <p className="text-xs text-destructive">{errors.quantity}</p>}
         </div>
         <div className="space-y-2">
           <Label>Category *</Label>
@@ -191,7 +239,7 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
             value={form.category_name}
             onValueChange={(value) => handleChange("category_name", value)}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className={`w-full ${errors.category_name ? "border-destructive" : ""}`}>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
@@ -202,6 +250,7 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
               ))}
             </SelectContent>
           </Select>
+          {errors.category_name && <p className="text-xs text-destructive">{errors.category_name}</p>}
         </div>
       </div>
 

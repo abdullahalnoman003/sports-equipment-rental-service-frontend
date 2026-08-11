@@ -68,7 +68,7 @@ export function PaymentCard({
 
           <div className="flex justify-between text-lg font-bold">
             <span>Total</span>
-            <span className="text-primary">${total}</span>
+            <span className="text-primary">৳{total}</span>
           </div>
 
           {showPayButton && (

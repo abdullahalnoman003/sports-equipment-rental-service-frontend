@@ -7,7 +7,9 @@ export const revalidate = 30
 
 export default async function CustomerOrdersPage() {
   const res = await fetchMyRentals({ next: { revalidate: 30 } })
-  const orders = res.success ? (res.data as Rental[]) : []
+  const orders = (res.success ? (res.data as Rental[]) : []).sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  )
 
   return (
     <DashboardLayout role="CUSTOMER">

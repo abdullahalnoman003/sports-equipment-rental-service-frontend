@@ -1,13 +1,21 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { updateUserProfile } from "../_actions/profile"
+import { z } from "zod"
 import toast from "react-hot-toast"
+
+const profileSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  profile_picture: z.string().url("Invalid image URL").optional().or(z.literal("")),
+  phone_number: z.string().optional().or(z.literal("")),
+  address: z.string().optional().or(z.literal("")),
+})
 
 export interface ProfileFormProps {
   initialData?: {
@@ -29,9 +37,31 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   })
   const [saving, setSaving] = useState(false)
   const [imgError, setImgError] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const validate = () => {
+    const result = profileSchema.safeParse({
+      name: form.name,
+      profile_picture: form.profile_picture,
+      phone_number: form.phone_number,
+      address: form.address,
+    })
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {}
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof typeof form
+        fieldErrors[field] = issue.message
+      }
+      setErrors(fieldErrors)
+      return false
+    }
+    setErrors({})
+    return true
+  }
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!validate()) return
     setSaving(true)
 
     try {
@@ -55,7 +85,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   }
 
   const initials = form.name ? form.name.charAt(0).toUpperCase() : "?"
-  const hasPicture = form.profile_picture && !imgError
+  const hasPicture = form.profile_picture && !imgError && (form.profile_picture.startsWith("http://") || form.profile_picture.startsWith("https://"))
 
   return (
     <form onSubmit={handleSave} className="space-y-6">
@@ -63,10 +93,12 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       <div className="flex items-center gap-4">
         <div className="relative">
           {hasPicture ? (
-            <img
+            <Image
               src={form.profile_picture}
               alt={form.name}
-              className="size-20 rounded-full object-cover"
+              width={80}
+              height={80}
+              className="rounded-full object-cover"
               onError={() => setImgError(true)}
             />
           ) : (
@@ -112,8 +144,17 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
           id="name"
           type="text"
           value={form.name}
-          onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+          onChange={(e) => {
+            setForm((f) => ({ ...f, name: e.target.value }))
+            setErrors((prev) => {
+              const next = { ...prev }
+              delete next.name
+              return next
+            })
+          }}
+          className={errors.name ? "border-destructive" : ""}
         />
+        {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
       </div>
 
       <div className="space-y-2">

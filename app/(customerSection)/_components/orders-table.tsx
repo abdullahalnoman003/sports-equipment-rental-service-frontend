@@ -132,7 +132,7 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right font-medium">
-                    ${order.total_price}
+                    ৳{order.total_price}
                   </TableCell>
                   <TableCell className="text-right">
                     {order.status === "CONFIRMED" && (

@@ -1,5 +1,6 @@
 "use server"
 
+import { z } from "zod"
 import { getToken } from "@/lib/get-token"
 import { api } from "@/service/api"
 
@@ -10,6 +11,16 @@ interface FetchOptions {
   }
 }
 
+const gearSchema = z.object({
+  name: z.string().min(1, "Gear name is required"),
+  description: z.string().min(1, "Description is required"),
+  image: z.string().url("Invalid image URL").optional().or(z.literal("")),
+  price: z.number().positive("Price must be greater than 0"),
+  quantity: z.number().int("Quantity must be a whole number").positive("Quantity must be greater than 0"),
+  brand: z.string().min(1, "Brand is required"),
+  category_name: z.string().min(1, "Category is required"),
+})
+
 export async function addNewGear(data: {
   name: string
   description: string
@@ -19,13 +30,19 @@ export async function addNewGear(data: {
   brand: string
   category_name: string
 }) {
+  const validation = gearSchema.safeParse(data)
+  if (!validation.success) {
+    const firstError = validation.error.issues[0]
+    return { success: false, statusCode: 400, message: firstError.message, data: null as unknown as never }
+  }
+
   const token = await getToken()
 
   const result = await api(
     "/api/provider/gear",
     {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(validation.data),
     },
     token
   )
@@ -34,13 +51,19 @@ export async function addNewGear(data: {
 }
 
 export async function updateGearById(id: string, data: Record<string, string | number>) {
+  const parsed = gearSchema.partial().safeParse(data)
+  if (!parsed.success) {
+    const firstError = parsed.error.issues[0]
+    return { success: false, statusCode: 400, message: firstError.message, data: null as unknown as never }
+  }
+
   const token = await getToken()
 
   const result = await api(
     `/api/provider/gear/${id}`,
     {
       method: "PUT",
-      body: JSON.stringify(data),
+      body: JSON.stringify(parsed.data),
     },
     token
   )
