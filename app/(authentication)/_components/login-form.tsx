@@ -2,13 +2,15 @@
 
 import { useState, useActionState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"
+import Link from "next/link"
+import { Eye, EyeOff, Mail, Lock, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { loginAction } from "../_actions/auth"
 import toast from "react-hot-toast"
 import { z } from "zod"
+import { cn } from "@/lib/utils"
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Please enter a valid email"),
@@ -64,17 +66,20 @@ export function LoginForm() {
   }
 
   return (
-    <form action={formAction} onSubmit={handleSubmit} className="space-y-4">
+    <form action={formAction} onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="text-sm font-medium">
+          Email address
+        </Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Mail className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             id="email"
             name="email"
             type="email"
             placeholder="you@example.com"
-            className={`pl-9 ${fieldErrors.email ? "border-destructive" : ""}`}
+            autoComplete="email"
+            className={cn("h-11 rounded-2xl pl-10", fieldErrors.email && "border-destructive")}
           />
         </div>
         {fieldErrors.email && (
@@ -83,13 +88,55 @@ export function LoginForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password" className="text-sm font-medium">
+            Password
+          </Label>
+          <Link
+            href="/help"
+            className="text-xs font-medium text-primary hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <PasswordInput fieldError={fieldErrors.password} />
       </div>
 
-      <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? "Signing in..." : "Sign in"}
+      <div className="flex items-center gap-2.5">
+        <input
+          type="checkbox"
+          id="remember"
+          className="size-4 rounded border-border accent-primary"
+        />
+        <Label htmlFor="remember" className="text-sm font-normal text-muted-foreground">
+          Keep me signed in on this device
+        </Label>
+      </div>
+
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full rounded-2xl shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+        disabled={pending}
+      >
+        {pending ? (
+          <span className="inline-flex items-center gap-2">
+            Signing in
+            <span className="flex gap-1">
+              <span className="size-1 animate-bounce rounded-full bg-primary-foreground [animation-delay:-0.2s]" />
+              <span className="size-1 animate-bounce rounded-full bg-primary-foreground [animation-delay:-0.1s]" />
+              <span className="size-1 animate-bounce rounded-full bg-primary-foreground" />
+            </span>
+          </span>
+        ) : (
+          "Sign in"
+        )}
       </Button>
+
+      <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/40 px-4 py-3 text-xs text-muted-foreground">
+        <Sparkles className="size-4 shrink-0 text-primary" />
+        Demo account: customer@gearup.com / provider@gearup.com
+      </div>
     </form>
   )
 }
@@ -98,24 +145,28 @@ function PasswordInput({ fieldError }: { fieldError?: string }) {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
-    <div className="relative">
-      <Lock className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-      <Input
-        id="password"
-        name="password"
-        type={showPassword ? "text" : "password"}
-        placeholder="Enter your password"
-        className={`pl-9 pr-10 ${fieldError ? "border-destructive" : ""}`}
-      />
-      <button
-        type="button"
-        onClick={() => setShowPassword((p) => !p)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-      >
-        {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-      </button>
+    <div>
+      <div className="relative">
+        <Lock className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          id="password"
+          name="password"
+          type={showPassword ? "text" : "password"}
+          placeholder="Enter your password"
+          autoComplete="current-password"
+          className={cn("h-11 rounded-2xl pl-10 pr-11", fieldError && "border-destructive")}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword((p) => !p)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1 text-muted-foreground transition-colors hover:text-foreground"
+          aria-label={showPassword ? "Hide password" : "Show password"}
+        >
+          {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+        </button>
+      </div>
       {fieldError && (
-        <p className="text-xs text-destructive mt-1">{fieldError}</p>
+        <p className="mt-1.5 text-xs text-destructive">{fieldError}</p>
       )}
     </div>
   )

@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, HelpCircle } from "lucide-react"
+import { ChevronDown, MessageCircleQuestion } from "lucide-react"
+import { SectionHeading } from "@/components/shared/page-hero"
+import { cn } from "@/lib/utils"
 
 const faqs = [
   {
@@ -22,7 +24,7 @@ const faqs = [
   {
     question: "What are the rental statuses?",
     answer:
-      "Orders go through these stages: PLACED → CONFIRMED → PAID → PICKED_UP → RETURNED. You can track the full status in your dashboard with color-coded badges.",
+      "Orders go through these stages: PLACED, CONFIRMED, PAID, PICKED_UP, then RETURNED. You can track the full status in your dashboard with color-coded badges.",
   },
   {
     question: "Can I cancel a rental?",
@@ -37,63 +39,71 @@ const faqs = [
 ]
 
 export function Faq() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="relative bg-muted/50 px-4 py-24" id="faq">
-      {/* Decorative background */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-0 top-0 h-px w-full bg-linear-to-r from-transparent via-border to-transparent" />
-        <div className="absolute bottom-0 left-0 h-px w-full bg-linear-to-r from-transparent via-border to-transparent" />
-      </div>
-
-      <div className="relative mx-auto max-w-3xl">
-        <div className="mb-16 text-center">
-          <span className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
-            FAQ
-          </span>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Frequently Asked{" "}
-            <span className="bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Questions
-            </span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Got questions? We&apos;ve got answers.
-          </p>
-        </div>
+    <section className="relative px-4 py-20 sm:py-24" id="faq">
+      <div className="mx-auto max-w-3xl">
+        <SectionHeading
+          eyebrow="FAQ"
+          title={
+            <>
+              Frequently Asked{" "}
+              <span className="text-gradient-brand">Questions</span>
+            </>
+          }
+          description="Got questions? We have got answers."
+        />
 
         <div className="space-y-3">
           {faqs.map((faq, i) => {
             const isOpen = openIndex === i
             return (
               <div
-                key={i}
-                className={`group overflow-hidden rounded-2xl border transition-all duration-300 ${
+                key={faq.question}
+                className={cn(
+                  "group overflow-hidden rounded-2xl border bg-card transition-all duration-300 animate-fade-up",
                   isOpen
-                    ? "border-primary/50 bg-card shadow-lg shadow-primary/5"
-                    : "border-border bg-card hover:border-primary/30"
-                }`}
+                    ? "border-primary/40 shadow-lg shadow-primary/5"
+                    : "border-border hover:border-primary/25"
+                )}
+                style={{ animationDelay: `${i * 60}ms` }}
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="flex w-full items-center gap-3 p-5 text-left"
+                  className="flex w-full items-center gap-4 p-5 text-left"
+                  aria-expanded={isOpen}
                 >
-                  <HelpCircle className={`size-5 shrink-0 transition-colors ${isOpen ? "text-primary" : "text-muted-foreground"}`} />
-                  <span className="flex-1 text-sm font-semibold">{faq.question}</span>
+                  <span
+                    className={cn(
+                      "flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors",
+                      isOpen
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-primary/10 text-primary"
+                    )}
+                  >
+                    <MessageCircleQuestion className="size-4" />
+                  </span>
+                  <span className="flex-1 text-sm font-semibold sm:text-base">
+                    {faq.question}
+                  </span>
                   <ChevronDown
-                    className={`size-4 shrink-0 text-muted-foreground transition-transform duration-300 ${
-                      isOpen ? "rotate-180 text-primary" : ""
-                    }`}
+                    className={cn(
+                      "size-4 shrink-0 text-muted-foreground transition-transform duration-300",
+                      isOpen && "rotate-180 text-primary"
+                    )}
                   />
                 </button>
                 <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  }`}
+                  className={cn(
+                    "grid transition-all duration-300",
+                    isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                  )}
                 >
-                  <div className="px-5 pb-5 pl-13 text-sm text-muted-foreground leading-relaxed">
-                    {faq.answer}
+                  <div className="overflow-hidden">
+                    <div className="px-5 pb-5 pl-[4.25rem] text-sm leading-relaxed text-muted-foreground">
+                      {faq.answer}
+                    </div>
                   </div>
                 </div>
               </div>

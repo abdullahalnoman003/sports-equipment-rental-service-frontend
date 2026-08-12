@@ -1,4 +1,5 @@
-import { Star, Quote } from "lucide-react"
+import { Star, Quote, BadgeCheck } from "lucide-react"
+import { SectionHeading } from "@/components/shared/page-hero"
 
 const testimonials = [
   {
@@ -35,63 +36,65 @@ const testimonials = [
   },
 ]
 
+const avatarColors = [
+  "bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-300",
+  "bg-sky-100 text-sky-600 dark:bg-sky-950 dark:text-sky-300",
+  "bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-300",
+  "bg-violet-100 text-violet-600 dark:bg-violet-950 dark:text-violet-300",
+]
+
 export function Testimonials() {
   return (
-    <section className="relative px-4 py-24" id="testimonials">
-      {/* Background accent */}
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-primary/2 to-transparent" />
+    <section className="relative bg-muted/40 px-4 py-20 sm:py-24" id="testimonials">
+      <div className="mx-auto max-w-7xl">
+        <SectionHeading
+          eyebrow="Testimonials"
+          title={
+            <>
+              Loved by{" "}
+              <span className="text-gradient-brand">Renters & Providers</span>
+            </>
+          }
+          description="See what our community has to say about renting and earning with GearUp."
+        />
 
-      <div className="relative mx-auto max-w-6xl">
-        <div className="mb-16 text-center">
-          <span className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
-            Testimonials
-          </span>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Loved by{" "}
-            <span className="bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Renters & Providers
-            </span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            See what our community has to say about GearUp.
-          </p>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           {testimonials.map((t, i) => (
-            <div
+            <figure
               key={t.name}
-              className="group relative rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
-              style={{ animationDelay: `${i * 100}ms` }}
+              className="group relative overflow-hidden rounded-3xl border border-border bg-card p-7 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 animate-fade-up"
+              style={{ animationDelay: `${i * 90}ms` }}
             >
-              {/* Quote icon */}
-              <Quote className="mb-4 size-8 text-primary/20" />
+              <Quote className="absolute -right-2 -top-2 size-20 text-primary/5 transition-transform duration-500 group-hover:scale-110" />
 
-              {/* Quote text */}
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                &ldquo;{t.quote}&rdquo;
-              </p>
-
-              {/* Rating */}
-              <div className="mt-4 flex gap-0.5">
-                {Array.from({ length: t.rating }).map((_, j) => (
-                  <Star key={j} className="size-4 fill-yellow-400 text-yellow-400" />
-                ))}
+              <div className="flex items-center justify-between">
+                <div className="flex gap-0.5">
+                  {Array.from({ length: t.rating }).map((_, j) => (
+                    <Star key={j} className="size-4 fill-gold text-gold" />
+                  ))}
+                </div>
+                <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                  <BadgeCheck className="size-3" />
+                  Verified
+                </span>
               </div>
 
-              {/* Author */}
-              <div className="mt-4 flex items-center gap-3 border-t border-border pt-4">
-                <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary transition-transform duration-300 group-hover:scale-110">
+              <blockquote className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+
+              <figcaption className="mt-6 flex items-center gap-3 border-t border-border pt-5">
+                <span className={`flex size-11 items-center justify-center rounded-full text-sm font-bold ${avatarColors[i % avatarColors.length]}`}>
                   {t.name.charAt(0)}
-                </div>
+                </span>
                 <div>
-                  <p className="text-sm font-semibold">{t.name}</p>
+                  <p className="text-sm font-bold">{t.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {t.role} &middot; {t.location}
                   </p>
                 </div>
-              </div>
-            </div>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>

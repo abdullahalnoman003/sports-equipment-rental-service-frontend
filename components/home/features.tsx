@@ -1,6 +1,7 @@
 "use client"
 
 import { Shield, Clock, CreditCard, Star, Search, Truck } from "lucide-react"
+import { SectionHeading } from "@/components/shared/page-hero"
 
 const features = [
   {
@@ -21,7 +22,7 @@ const features = [
     icon: Clock,
     title: "Flexible Rental Periods",
     description:
-      "Rent by the hour, day, week, or month. Select your dates with interactive date pickers — no past dates allowed.",
+      "Rent by the hour, day, week, or month. Select your dates with interactive date pickers, no past dates allowed.",
     color: "text-purple-600 bg-purple-100 dark:bg-purple-950 dark:text-purple-400",
   },
   {
@@ -49,46 +50,38 @@ const features = [
 
 export function Features() {
   return (
-    <section className="relative px-4 py-24" id="features">
-      {/* Subtle background accent */}
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-primary/2 to-transparent" />
+    <section className="relative px-4 py-20 sm:py-24" id="features">
+      <div className="mx-auto max-w-7xl">
+        <SectionHeading
+          eyebrow="Why Choose Us"
+          title={
+            <>
+              Everything You Need for a{" "}
+              <span className="text-gradient-brand">Seamless Rental</span>
+            </>
+          }
+          description="From secure payments to verified providers, we have built the platform around your peace of mind."
+        />
 
-      <div className="relative mx-auto max-w-6xl">
-        <div className="mb-16 text-center">
-          <span className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
-            Why Choose Us
-          </span>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
-            Why Rent with{" "}
-            <span className="bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              GearUp?
-            </span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Everything you need for a seamless gear rental experience.
-          </p>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, i) => (
             <div
               key={feature.title}
-              className="group relative rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
-              style={{ animationDelay: `${i * 100}ms` }}
+              className="group relative overflow-hidden rounded-3xl border border-border bg-card p-7 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 animate-fade-up"
+              style={{ animationDelay: `${i * 80}ms` }}
             >
-              {/* Icon */}
-              <div className={`mb-4 flex size-12 items-center justify-center rounded-xl ${feature.color} transition-transform duration-300 group-hover:scale-110`}>
+              <div className="pointer-events-none absolute -right-16 -top-16 size-40 rounded-full bg-primary/5 blur-2xl transition-all duration-500 group-hover:bg-primary/10" />
+
+              <div className={`mb-5 flex size-12 items-center justify-center rounded-2xl ${feature.color} transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3`}>
                 <feature.icon className="size-6" />
               </div>
 
-              {/* Content */}
-              <h3 className="text-lg font-semibold">{feature.title}</h3>
+              <h3 className="text-lg font-bold">{feature.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {feature.description}
               </p>
 
-              {/* Hover accent line */}
-              <div className="absolute bottom-0 left-6 right-6 h-0.5 bg-linear-to-r from-primary/0 via-primary to-primary/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute bottom-0 left-7 right-7 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-primary to-gold transition-transform duration-500 group-hover:scale-x-100" />
             </div>
           ))}
         </div>

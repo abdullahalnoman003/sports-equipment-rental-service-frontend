@@ -1,0 +1,22 @@
+<svg width="96" height="96" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stopColor="#10b981"/>
+      <stop offset="1" stopColor="#047857"/>
+    </linearGradient>
+  </defs>
+  <rect x="1.5" y="1.5" width="45" height="45" rx="14" fill="url(#g)"/>
+  <rect x="1.5" y="1.5" width="45" height="45" rx="14" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <g fill="#ffffff" opacity="0.9">
+    <rect x="22.4" y="7" width="3.2" height="8.5" rx="1.6" transform="rotate(0 24 24)"/>
+    <rect x="22.4" y="7" width="3.2" height="8.5" rx="1.6" transform="rotate(45 24 24)"/>
+    <rect x="22.4" y="7" width="3.2" height="8.5" rx="1.6" transform="rotate(90 24 24)"/>
+    <rect x="22.4" y="7" width="3.2" height="8.5" rx="1.6" transform="rotate(135 24 24)"/>
+    <rect x="22.4" y="7" width="3.2" height="8.5" rx="1.6" transform="rotate(180 24 24)"/>
+    <rect x="22.4" y="7" width="3.2" height="8.5" rx="1.6" transform="rotate(225 24 24)"/>
+    <rect x="22.4" y="7" width="3.2" height="8.5" rx="1.6" transform="rotate(270 24 24)"/>
+    <rect x="22.4" y="7" width="3.2" height="8.5" rx="1.6" transform="rotate(315 24 24)"/>
+  </g>
+  <circle cx="24" cy="24" r="9" fill="#ffffff"/>
+  <path d="M24 18.5 29 23.5 24 28.5 22.8 27.3 26.1 24H19v-1h7.1L22.8 19.7 24 18.5Z" fill="#10b981"/>
+</svg>

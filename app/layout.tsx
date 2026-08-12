@@ -1,10 +1,10 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
+import { Lora } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Toaster } from "react-hot-toast";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Lora({ subsets: ["latin"], variable: "--font-sans" , weight: ["400", "700"] });
 
 export default function RootLayout({
   children,
