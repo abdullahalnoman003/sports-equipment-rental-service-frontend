@@ -23,9 +23,9 @@ interface CategoryFormProps {
 }
 
 export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProps) {
-  const [name, setName] = useState("")
-  const [description, setDescription] = useState("")
-  const [image, setImage] = useState("")
+  const [name, setName] = useState(category?.name ?? "")
+  const [description, setDescription] = useState(category?.description ?? "")
+  const [image, setImage] = useState(category?.image ?? "")
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
