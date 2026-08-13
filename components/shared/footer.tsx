@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowRight, CheckCircle2, Lock, ShieldCheck } from "lucide-react"
+import { ArrowRight, CheckCircle2, Lock } from "lucide-react"
 import {
   FaFacebookF,
   FaInstagram,

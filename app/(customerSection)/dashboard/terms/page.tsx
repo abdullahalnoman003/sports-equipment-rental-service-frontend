@@ -3,7 +3,7 @@
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 
 const sections = [
-  { title: "1. Acceptance of Terms", content: "By accessing GearUp, you agree to these Terms of Service. These apply to all users — customers, providers, and visitors." },
+  { title: "1. Acceptance of Terms", content: "By accessing GearUp, you agree to these Terms of Service. These apply to all users: customers, providers, and visitors." },
   { title: "2. Definitions", content: "Customer: rents gear. Provider: lists gear. Gear: equipment listed for rent. Rental: a booking transaction." },
   { title: "3. User Accounts", content: "Must be 18+ to create an account. One person may not maintain more than one account." },
   { title: "4. Rentals & Payments", content: "Payments processed through Stripe. Customers charged after Provider confirms. Cancellations before start date receive full refund." },

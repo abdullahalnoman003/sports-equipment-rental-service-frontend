@@ -19,17 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/shared/status-badge"
 import type { Rental } from "@/lib/types"
-
-const STATUS_COLORS: Record<string, string> = {
-  PLACED: "bg-yellow-100 text-yellow-700",
-  CONFIRMED: "bg-blue-100 text-blue-700",
-  PAID: "bg-purple-100 text-purple-700",
-  PICKED_UP: "bg-green-100 text-green-700",
-  RETURNED: "bg-gray-100 text-gray-600",
-  CANCELED: "bg-red-100 text-red-700",
-}
 
 const ITEMS_PER_PAGE = 10
 
@@ -138,12 +129,7 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
                     {startDate} - {endDate}
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className={STATUS_COLORS[order.status]}
-                      variant="outline"
-                    >
-                      {order.status.replace("_", " ")}
-                    </Badge>
+                    <StatusBadge status={order.status} />
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     ৳{order.total_price}

@@ -1,5 +1,22 @@
-import { Briefcase, MapPin, Clock, ChevronRight } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import {
+  Briefcase,
+  MapPin,
+  Clock,
+  ArrowRight,
+  Gift,
+  Coffee,
+  HeartPulse,
+  Plane,
+  GraduationCap,
+  Star,
+  Sparkles,
+  Send,
+} from "lucide-react"
 import type { Metadata } from "next"
+import { PageHero } from "@/components/shared/page-hero"
+import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
   title: "Careers | GearUp Bangladesh",
@@ -38,41 +55,77 @@ const openings = [
 ]
 
 const benefits = [
-  "Competitive salary in BDT",
-  "Flexible hybrid work model",
-  "Health insurance coverage",
-  "Annual sports & outdoor trips",
-  "Learning & development budget",
-  "Free GearUp credits monthly",
-  "Stock options (early employees)",
-  "5-day work week (Sat - Wed)",
+  { icon: Star, title: "Competitive salary", desc: "Market-leading pay in BDT with review cycles" },
+  { icon: Coffee, title: "Flexible work", desc: "Hybrid model with a 5-day work week" },
+  { icon: HeartPulse, title: "Health coverage", desc: "Medical insurance for you and your family" },
+  { icon: Plane, title: "Gear trips", desc: "Annual sports and outdoor team retreats" },
+  { icon: GraduationCap, title: "Learning budget", desc: "Courses, books, and conference access" },
+  { icon: Gift, title: "GearUp credits", desc: "Free monthly credits for the platform" },
 ]
 
 export default function CareersPage() {
   return (
     <>
-      {/* Hero */}
-      <section className="px-4 py-20 text-center">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">Join Our Team</p>
-          <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            Build the Future of <span className="text-primary">Gear Rental</span>
-          </h1>
-          <p className="mt-6 text-lg text-muted-foreground">
-            We&apos;re on a mission to make sports gear accessible to every Bangladeshi.
-            Join us in Dhaka and help build something meaningful.
-          </p>
+      <PageHero
+        eyebrow="Careers at GearUp"
+        title={
+          <>
+            Build the Future of <span className="text-gradient-brand">Gear Rental</span>
+          </>
+        }
+        description="We are on a mission to make sports gear accessible to every Bangladeshi. Join us in Dhaka and help build something meaningful."
+      />
+
+      {/* Culture image */}
+      <section className="px-4 pb-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="relative overflow-hidden rounded-3xl border border-border shadow-xl shadow-primary/10">
+            <Image
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=80"
+              alt="The GearUp team collaborating in a bright office"
+              width={1600}
+              height={500}
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              className="aspect-[3/1] w-full object-cover max-sm:aspect-[4/3]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+            <div className="absolute bottom-5 left-5 flex items-center gap-3 sm:bottom-8 sm:left-8">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-primary shadow-lg">
+                <Sparkles className="size-6 text-primary-foreground" />
+              </div>
+              <div className="text-white">
+                <p className="text-lg font-bold sm:text-xl">Work hard. Play harder.</p>
+                <p className="text-sm text-white/80">A team that lives the sports spirit</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Benefits */}
-      <section className="bg-muted px-4 py-16">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="mb-8 text-center text-2xl font-bold tracking-tight">Why Work at GearUp?</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="px-4 pb-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-12 text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary backdrop-blur-sm">
+              <span className="size-1.5 rounded-full bg-primary" />
+              Perks
+            </span>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              Why Work at <span className="text-gradient-brand">GearUp</span>?
+            </h2>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {benefits.map((b) => (
-              <div key={b} className="rounded-lg border border-border bg-card px-4 py-3 text-center text-sm font-medium">
-                {b}
+              <div
+                key={b.title}
+                className="group rounded-3xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
+              >
+                <span className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                  <b.icon className="size-6" />
+                </span>
+                <h3 className="mt-4 text-lg font-bold">{b.title}</h3>
+                <p className="mt-1.5 text-sm text-muted-foreground">{b.desc}</p>
               </div>
             ))}
           </div>
@@ -80,42 +133,60 @@ export default function CareersPage() {
       </section>
 
       {/* Openings */}
-      <section className="px-4 py-20">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="mb-2 text-2xl font-bold tracking-tight">Open Positions</h2>
-          <p className="mb-8 text-muted-foreground">
-            We&apos;re always looking for talented people who share our passion for sports and technology.
-          </p>
+      <section className="relative px-4 pb-20">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-dots-faint [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_50%,transparent_100%)]" />
+        </div>
+        <div className="relative mx-auto max-w-4xl">
+          <div className="mb-12 text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary backdrop-blur-sm">
+              <span className="size-1.5 rounded-full bg-primary" />
+              Openings
+            </span>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+              Open Positions
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+              We are always looking for talented people who share our passion for sports and
+              technology.
+            </p>
+          </div>
+
           <div className="space-y-4">
             {openings.map((job) => (
               <div
                 key={job.title}
-                className="group rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/50"
+                className="group rounded-3xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 sm:p-7"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold group-hover:text-primary">{job.title}</h3>
-                    <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0">
+                    <h3 className="text-lg font-bold transition-colors group-hover:text-primary">
+                      {job.title}
+                    </h3>
+                    <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
                         <Briefcase className="size-3.5" />
                         {job.department}
                       </span>
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1">
                         <MapPin className="size-3.5" />
                         {job.location}
                       </span>
-                      <span className="flex items-center gap-1">
+                      <span className="inline-flex items-center gap-1">
                         <Clock className="size-3.5" />
                         {job.type}
                       </span>
                     </div>
-                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{job.description}</p>
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                      {job.description}
+                    </p>
                   </div>
                   <a
                     href="mailto:careers@gearup.com.bd"
-                    className="shrink-0 inline-flex items-center gap-1 rounded-lg border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-border px-5 py-2.5 text-sm font-medium transition-all hover:border-primary hover:bg-primary hover:text-primary-foreground"
                   >
-                    Apply <ChevronRight className="size-3.5" />
+                    Apply
+                    <ArrowRight className="size-3.5" />
                   </a>
                 </div>
               </div>
@@ -125,16 +196,30 @@ export default function CareersPage() {
       </section>
 
       {/* CTA */}
-      <section className="px-4 pb-20">
-        <div className="mx-auto max-w-3xl rounded-2xl bg-muted px-8 py-12 text-center">
-          <h2 className="text-2xl font-bold tracking-tight">Don&apos;t See Your Role?</h2>
-          <p className="mt-2 text-muted-foreground">
-            Send your CV to{" "}
-            <a href="mailto:careers@gearup.com.bd" className="text-primary hover:underline">
-              careers@gearup.com.bd
-            </a>{" "}
-            and we&apos;ll keep you in mind for future openings.
-          </p>
+      <section className="px-4 pb-24">
+        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-card to-gold/10 p-10 text-center sm:p-14">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -right-16 -top-16 size-56 rounded-full bg-primary/10 blur-3xl" />
+            <div className="absolute -bottom-16 -left-16 size-56 rounded-full bg-gold/10 blur-3xl" />
+          </div>
+          <div className="relative">
+            <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary/15">
+              <Send className="size-7 text-primary" />
+            </span>
+            <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
+              Don&apos;t See Your Role?
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+              Send your CV to{" "}
+              <a href="mailto:careers@gearup.com.bd" className="font-medium text-primary hover:underline">
+                careers@gearup.com.bd
+              </a>{" "}
+              and we will keep you in mind for future openings.
+            </p>
+            <Button asChild size="lg" className="mt-7 rounded-xl shadow-lg shadow-primary/20">
+              <Link href="mailto:careers@gearup.com.bd">Send your CV</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </>

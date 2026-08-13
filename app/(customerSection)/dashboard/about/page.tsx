@@ -52,7 +52,7 @@ export default function DashboardAboutPage() {
             </p>
             <p>
               Today, GearUp serves users across all 64 districts. Whether you&apos;re a student needing a
-              football for a tournament or a family planning a Cox&apos;s Bazar trip — GearUp has you covered.
+              football for a tournament or a family planning a Cox&apos;s Bazar trip, GearUp has you covered.
             </p>
           </div>
         </div>

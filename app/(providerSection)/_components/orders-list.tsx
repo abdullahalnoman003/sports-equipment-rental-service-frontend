@@ -1,14 +1,7 @@
 import Link from "next/link"
+import { Package, ArrowUpRight } from "lucide-react"
+import { StatusBadge } from "@/components/shared/status-badge"
 import type { RentalStatus } from "@/lib/types"
-
-const STATUS_COLORS: Record<string, string> = {
-  PLACED: "bg-yellow-100 text-yellow-700",
-  CONFIRMED: "bg-blue-100 text-blue-700",
-  PAID: "bg-purple-100 text-purple-700",
-  PICKED_UP: "bg-green-100 text-green-700",
-  RETURNED: "bg-gray-100 text-gray-600",
-  CANCELED: "bg-red-100 text-red-700",
-}
 
 interface OrderItem {
   id: string
@@ -25,36 +18,48 @@ interface OrdersListProps {
 
 export function OrdersList({ orders }: OrdersListProps) {
   return (
-    <div className="rounded-xl border border-border bg-card">
+    <div className="overflow-hidden rounded-3xl border border-border bg-card transition-colors hover:border-primary/25">
       <div className="flex items-center justify-between border-b border-border px-6 py-4">
-        <h2 className="text-lg font-semibold">Recent Orders</h2>
-        <Link href="/dashboard/provider/orders" className="text-sm text-primary hover:underline">
+        <div className="flex items-center gap-3">
+          <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10">
+            <Package className="size-4 text-primary" />
+          </span>
+          <h2 className="text-lg font-bold tracking-tight">Recent Orders</h2>
+        </div>
+        <Link
+          href="/dashboard/provider/orders"
+          className="group inline-flex items-center gap-1 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+        >
           View all
+          <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
-      <div className="divide-y divide-border">
-        {orders.map((order) => (
-          <div key={order.id} className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{order.gear}</p>
-              <p className="text-xs text-muted-foreground">
-                {order.customer} &middot; {order.dates}
-              </p>
-            </div>
-            <div className="flex shrink-0 flex-col items-end gap-1">
-              <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${STATUS_COLORS[order.status]}`}
-              >
-                {order.status.replace("_", " ")}
-              </span>
-              <p className="text-sm font-semibold">${order.total}</p>
-            </div>
+      <div className="divide-y divide-border/70">
+        {orders.length === 0 ? (
+          <div className="px-6 py-12 text-center">
+            <span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-muted">
+              <Package className="size-5 text-muted-foreground/60" />
+            </span>
+            <p className="mt-3 text-sm text-muted-foreground">No orders yet.</p>
           </div>
-        ))}
-        {orders.length === 0 && (
-          <div className="px-6 py-8 text-center text-sm text-muted-foreground">
-            No orders yet.
-          </div>
+        ) : (
+          orders.map((order) => (
+            <div
+              key={order.id}
+              className="flex items-center justify-between gap-3 px-6 py-3.5 transition-colors hover:bg-muted/30"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold">{order.gear}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {order.customer} &middot; {order.dates}
+                </p>
+              </div>
+              <div className="flex shrink-0 flex-col items-end gap-1.5">
+                <StatusBadge status={order.status} className="px-2 py-0.5 text-[10px]" />
+                <p className="text-sm font-bold">৳{order.total}</p>
+              </div>
+            </div>
+          ))
         )}
       </div>
     </div>

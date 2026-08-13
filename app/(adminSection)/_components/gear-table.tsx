@@ -113,7 +113,7 @@ export function GearTable({ gear }: GearTableProps) {
                   <Badge variant="secondary">{item.category_Name}</Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground">{item.provider_email}</TableCell>
-                <TableCell className="font-medium">${item.price}</TableCell>
+                <TableCell className="font-medium">৳{item.price}</TableCell>
                 <TableCell className="text-muted-foreground">{item.quantity}</TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="sm" asChild>

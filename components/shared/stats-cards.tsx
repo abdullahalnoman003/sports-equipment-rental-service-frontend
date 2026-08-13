@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 import type { LucideIcon } from "lucide-react"
 
 interface Stat {
@@ -14,21 +14,28 @@ interface StatsCardsProps {
 
 export function StatsCards({ stats }: StatsCardsProps) {
   return (
-    <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => (
-        <Card key={stat.label}>
-          <CardContent>
-            <div className="flex items-center gap-3">
-              <div className={`flex size-10 items-center justify-center rounded-lg ${stat.color}`}>
-                <stat.icon className="size-5" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-              </div>
+        <div
+          key={stat.label}
+          className="group relative overflow-hidden rounded-3xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
+        >
+          <div className="pointer-events-none absolute -right-8 -top-8 size-24 rounded-full bg-primary/5 blur-2xl transition-all group-hover:bg-primary/10" />
+          <div className="relative flex items-center gap-4">
+            <span
+              className={cn(
+                "flex size-12 shrink-0 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110",
+                stat.color
+              )}
+            >
+              <stat.icon className="size-6" />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-2xl font-bold tracking-tight">{stat.value}</p>
+              <p className="truncate text-xs text-muted-foreground">{stat.label}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ))}
     </div>
   )

@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Ban, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/shared/status-badge"
 import {
   Select,
   SelectContent,
@@ -21,12 +21,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { User } from "@/lib/types"
-
-const ROLE_COLORS: Record<string, string> = {
-  CUSTOMER: "bg-blue-100 text-blue-700",
-  PROVIDER: "bg-green-100 text-green-700",
-  ADMIN: "bg-purple-100 text-purple-700",
-}
 
 const ITEMS_PER_PAGE = 10
 
@@ -111,28 +105,13 @@ export function UsersTable({ users, onToggleStatus }: UsersTableProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge className={`${ROLE_COLORS[user.role]} border-none`}>
-                    {user.role}
-                  </Badge>
+                  <StatusBadge status={user.role} withDot={false} />
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {new Date(user.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </TableCell>
                 <TableCell>
-                  <Badge
-                    className={`border-none ${
-                      user.status === "ACTIVE"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {user.status === "ACTIVE" ? (
-                      <CheckCircle className="size-3" />
-                    ) : (
-                      <Ban className="size-3" />
-                    )}
-                    {user.status}
-                  </Badge>
+                  <StatusBadge status={user.status} />
                 </TableCell>
                 <TableCell className="text-right">
                   <Button

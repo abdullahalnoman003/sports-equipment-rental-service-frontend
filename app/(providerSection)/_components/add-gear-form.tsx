@@ -198,7 +198,7 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
             rows={4}
             value={form.description}
             onChange={(e) => handleChange("description", e.target.value)}
-            placeholder="Describe your gear — condition, features, what's included..."
+            placeholder="Describe your gear: condition, features, what's included..."
             className={errors.description ? "border-destructive" : ""}
           />
           {errors.description && <p className="text-xs text-destructive">{errors.description}</p>}

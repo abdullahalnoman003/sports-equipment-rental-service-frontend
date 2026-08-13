@@ -15,7 +15,11 @@ export default async function CustomerOrdersPage() {
     <DashboardLayout role="CUSTOMER">
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Rentals</h1>
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary backdrop-blur-sm">
+            <span className="size-1.5 rounded-full bg-primary" />
+            My Rentals
+          </span>
+          <h1 className="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">Rental orders</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Track and manage all your rental orders
           </p>

@@ -155,14 +155,14 @@ export function CategoriesTable() {
             {categories.map((category) => (
               <TableRow key={category.id}>
                 <TableCell className="font-medium">{category.name}</TableCell>
-                <TableCell className="text-muted-foreground">{category.description || "—"}</TableCell>
+                <TableCell className="text-muted-foreground">{category.description || "N/A"}</TableCell>
                 <TableCell className="text-muted-foreground">
                   {category.image ? (
                     <a href={category.image} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                       View
                     </a>
                   ) : (
-                    "—"
+                    "N/A"
                   )}
                 </TableCell>
                 <TableCell className="text-right">

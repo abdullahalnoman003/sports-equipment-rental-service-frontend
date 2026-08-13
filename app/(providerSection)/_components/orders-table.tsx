@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Package, ChevronLeft, ChevronRight } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/shared/status-badge"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -20,15 +20,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { RentalWithPayment } from "@/lib/types"
-
-const STATUS_COLORS: Record<string, string> = {
-  PLACED: "bg-yellow-100 text-yellow-700",
-  CONFIRMED: "bg-blue-100 text-blue-700",
-  PAID: "bg-purple-100 text-purple-700",
-  PICKED_UP: "bg-green-100 text-green-700",
-  RETURNED: "bg-gray-100 text-gray-600",
-  CANCELED: "bg-red-100 text-red-700",
-}
 
 const ALL_STATUSES = [
   { value: "PLACED", label: "Placed" },
@@ -133,19 +124,14 @@ export function OrdersTable({ orders: initialOrders, onStatusUpdate }: OrdersTab
                     {startDate} - {endDate}
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className={STATUS_COLORS[order.status]}
-                      variant="outline"
-                    >
-                      {order.status.replace("_", " ")}
-                    </Badge>
+                    <StatusBadge status={order.status} />
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     ৳{order.total_price}
                   </TableCell>
                   <TableCell className="text-right">
                     {isReturned ? (
-                      <span className="text-xs text-muted-foreground">—</span>
+                      <span className="text-xs text-muted-foreground">N/A</span>
                     ) : (
                       <div className="flex items-center justify-end gap-2">
                         <Select

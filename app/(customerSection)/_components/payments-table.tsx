@@ -11,15 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/shared/status-badge"
 import type { Payment } from "@/lib/types"
-
-const STATUS_COLORS: Record<string, string> = {
-  PENDING: "bg-yellow-100 text-yellow-700",
-  SUCCESS: "bg-green-100 text-green-700",
-  FAILED: "bg-red-100 text-red-700",
-  REFUNDED: "bg-orange-100 text-orange-700",
-}
 
 const ITEMS_PER_PAGE = 10
 
@@ -64,12 +57,7 @@ export function PaymentsTable({ payments }: PaymentsTableProps) {
                     : new Date(payment.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </TableCell>
                 <TableCell>
-                  <Badge
-                    className={STATUS_COLORS[payment.status]}
-                    variant="outline"
-                  >
-                    {payment.status}
-                  </Badge>
+                  <StatusBadge status={payment.status} />
                 </TableCell>
                 <TableCell className="text-right font-medium">
                   ৳{payment.amount}

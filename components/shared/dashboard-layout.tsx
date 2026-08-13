@@ -18,9 +18,13 @@ import {
   HelpCircle,
   FileText,
   BookOpen,
+  ChevronRight,
+  Tags,
 } from "lucide-react"
+import { Logo } from "@/components/shared/logo"
 import { logout } from "@/service/logout"
 import toast from "react-hot-toast"
+import { cn } from "@/lib/utils"
 import type { Role } from "@/lib/types"
 
 interface SidebarLink {
@@ -48,7 +52,7 @@ const adminLinks: SidebarLink[] = [
   { label: "Users", href: "/dashboard/admin/users", icon: User },
   { label: "All Gear", href: "/dashboard/admin/gear", icon: Package },
   { label: "Rentals", href: "/dashboard/admin/rentals", icon: CreditCard },
-  { label: "Categories", href: "/dashboard/admin/categories", icon: LayoutDashboard },
+  { label: "Categories", href: "/dashboard/admin/categories", icon: Tags },
 ]
 
 const staticLinks: SidebarLink[] = [
@@ -61,6 +65,36 @@ const staticLinks: SidebarLink[] = [
 
 const roleIcons = { CUSTOMER: Package, PROVIDER: Store, ADMIN: Shield }
 const roleLabels = { CUSTOMER: "Customer", PROVIDER: "Provider", ADMIN: "Admin" }
+
+function SidebarLinkItem({
+  link,
+  active,
+  onClick,
+}: {
+  link: SidebarLink
+  active: boolean
+  onClick?: () => void
+}) {
+  return (
+    <Link
+      href={link.href}
+      onClick={onClick}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+        active
+          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+      )}
+    >
+      <link.icon
+        className={cn("size-4 shrink-0 transition-transform", !active && "group-hover:scale-110")}
+      />
+      {link.label}
+      {active && <ChevronRight className="ml-auto size-4 shrink-0 opacity-70" />}
+    </Link>
+  )
+}
 
 export function DashboardLayout({
   role = "CUSTOMER",
@@ -98,67 +132,55 @@ export function DashboardLayout({
 
   const navContent = (
     <>
-      <div className="flex items-center gap-2 border-b border-border px-4 py-4">
-        <RoleIcon className="size-5 text-primary" />
-        <span className="text-sm font-semibold">{roleLabel} Dashboard</span>
+      <div className="flex items-center gap-3 border-b border-border px-5 py-4">
+        <Link href="/" onClick={closeMobile} aria-label="GearUp home">
+          <Logo showText={false} className="size-9" />
+        </Link>
+        <div className="min-w-0">
+          <p className="flex items-center gap-1.5 truncate text-sm font-bold">
+            <RoleIcon className="size-3.5 text-primary" />
+            {roleLabel}
+          </p>
+          <p className="truncate text-xs text-muted-foreground">Dashboard</p>
+        </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto p-3">
-        <div className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <div className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
           Menu
         </div>
-        <div className="space-y-0.5">
-          {links.map((link) => {
-            const isActive = pathname === link.href
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={closeMobile}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                }`}
-              >
-                <link.icon className="size-4 shrink-0" />
-                {link.label}
-              </Link>
-            )
-          })}
+        <div className="space-y-1">
+          {links.map((link) => (
+            <SidebarLinkItem
+              key={link.href}
+              link={link}
+              active={pathname === link.href}
+              onClick={closeMobile}
+            />
+          ))}
         </div>
 
-        <div className="my-3 h-px bg-border" />
+        <div className="my-4 h-px bg-border" />
 
-        <div className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <div className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
           Explore
         </div>
-        <div className="space-y-0.5">
-          {staticLinks.map((link) => {
-            const isActive = pathname === link.href
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={closeMobile}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                }`}
-              >
-                <link.icon className="size-4 shrink-0" />
-                {link.label}
-              </Link>
-            )
-          })}
+        <div className="space-y-1">
+          {staticLinks.map((link) => (
+            <SidebarLinkItem
+              key={link.href}
+              link={link}
+              active={pathname === link.href}
+              onClick={closeMobile}
+            />
+          ))}
         </div>
       </nav>
 
       <div className="border-t border-border p-3">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-destructive/10 hover:text-destructive"
         >
           <LogOut className="size-4 shrink-0" />
           Log out
@@ -179,15 +201,12 @@ export function DashboardLayout({
 
       {/* Mobile drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border bg-card transition-transform duration-200 lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-border bg-card shadow-2xl transition-transform duration-300 lg:hidden ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-4">
-          <div className="flex items-center gap-2">
-            <RoleIcon className="size-5 text-primary" />
-            <span className="text-sm font-semibold">{roleLabel} Dashboard</span>
-          </div>
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <p className="text-sm font-semibold">{roleLabel} Dashboard</p>
           <button
             onClick={closeMobile}
             className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent"
@@ -196,7 +215,7 @@ export function DashboardLayout({
             <X className="size-5" />
           </button>
         </div>
-        {navContent}
+        <div className="flex-1 overflow-y-auto">{navContent}</div>
       </aside>
 
       {/* Desktop sidebar */}
@@ -207,21 +226,24 @@ export function DashboardLayout({
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Mobile top bar */}
-        <header className="flex items-center gap-3 border-b border-border bg-card px-4 py-3 lg:hidden">
+        <header className="flex items-center gap-3 border-b border-border bg-card/80 px-4 py-3 backdrop-blur-sm lg:hidden">
           <button
             onClick={() => setMobileOpen(true)}
-            className="flex size-9 items-center justify-center rounded-lg border border-border hover:bg-accent"
+            className="flex size-9 items-center justify-center rounded-xl border border-border hover:bg-accent"
             aria-label="Open menu"
           >
             <Menu className="size-5" />
           </button>
+          <Link href="/" aria-label="GearUp home">
+            <Logo showText={false} className="size-8" />
+          </Link>
           <div className="flex items-center gap-2">
             <RoleIcon className="size-4 text-primary" />
             <span className="text-sm font-semibold">{roleLabel}</span>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/20 p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

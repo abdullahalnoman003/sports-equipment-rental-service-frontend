@@ -1,7 +1,10 @@
 "use client"
 
-import { Package, CreditCard, Shield, UserCircle, Wrench } from "lucide-react"
+import { Package, CreditCard, ShieldCheck, UserCircle, Wrench, LifeBuoy } from "lucide-react"
+import Link from "next/link"
 import { HelpAccordion } from "../_components/help/help-accordion"
+import { PageHero } from "@/components/shared/page-hero"
+import { Button } from "@/components/ui/button"
 
 const categories = [
   {
@@ -25,7 +28,7 @@ const categories = [
     ],
   },
   {
-    icon: Shield,
+    icon: ShieldCheck,
     title: "Safety & Protection",
     articles: [
       { q: "What if the gear gets damaged?", a: "Every rental includes damage protection. File a claim from your dashboard with photos and a description. Our team reviews claims within 48 hours." },
@@ -58,32 +61,42 @@ const categories = [
 export default function HelpPage() {
   return (
     <>
-      <section className="px-4 py-20 text-center">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">Help Center</p>
-          <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
-            How Can We <span className="text-primary">Help</span>?
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Search our knowledge base or browse by topic.
-          </p>
-          <HelpAccordion categories={categories} />
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Help Center"
+        title={
+          <>
+            How Can We <span className="text-gradient-brand">Help</span>?
+          </>
+        }
+        description="Search our knowledge base or browse by topic. If you cannot find an answer, our support team is always here for you."
+      />
+      <HelpAccordion categories={categories} />
 
-      <section className="px-4 pb-20">
-        <div className="mx-auto max-w-3xl rounded-2xl bg-muted px-8 py-12 text-center">
-          <h2 className="text-xl font-bold tracking-tight">Still Need Help?</h2>
-          <p className="mt-2 text-muted-foreground">
-            Contact our support team at{" "}
-            <a href="mailto:support@gearup.com.bd" className="text-primary hover:underline">
-              support@gearup.com.bd
-            </a>{" "}
-            or call{" "}
-            <a href="tel:+8801700000000" className="text-primary hover:underline">
-              +880 1700-000000
-            </a>
-          </p>
+      <section className="px-4 pb-24">
+        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-card to-gold/10 p-10 text-center sm:p-12">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -right-12 -top-12 size-44 rounded-full bg-primary/10 blur-3xl" />
+            <div className="absolute -bottom-12 -left-12 size-44 rounded-full bg-gold/10 blur-3xl" />
+          </div>
+          <div className="relative">
+            <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary/15">
+              <LifeBuoy className="size-7 text-primary" />
+            </span>
+            <h2 className="mt-5 text-2xl font-bold tracking-tight sm:text-3xl">
+              Still Need Help?
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+              Contact our friendly support team and we will get back to you within 24 hours.
+            </p>
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Button asChild size="lg" className="rounded-xl shadow-lg shadow-primary/20">
+                <Link href="mailto:support@gearup.com.bd">Email Support</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="rounded-xl">
+                <Link href="tel:+8801700000000">Call Us</Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     </>

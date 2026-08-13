@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Search, Package, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { StatusBadge } from "@/components/shared/status-badge"
 import {
   Select,
   SelectContent,
@@ -21,15 +21,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { Rental } from "@/lib/types"
-
-const STATUS_COLORS: Record<string, string> = {
-  PLACED: "bg-yellow-100 text-yellow-700",
-  CONFIRMED: "bg-blue-100 text-blue-700",
-  PAID: "bg-purple-100 text-purple-700",
-  PICKED_UP: "bg-green-100 text-green-700",
-  RETURNED: "bg-gray-100 text-gray-600",
-  CANCELED: "bg-red-100 text-red-700",
-}
 
 const ITEMS_PER_PAGE = 10
 
@@ -122,11 +113,9 @@ export function RentalsTable({ rentals }: RentalsTableProps) {
                     {startDate} - {endDate}
                   </TableCell>
                   <TableCell>
-                    <Badge className={`${STATUS_COLORS[rental.status]} border-none`}>
-                      {rental.status.replace("_", " ")}
-                    </Badge>
+                    <StatusBadge status={rental.status} />
                   </TableCell>
-                  <TableCell className="text-right font-medium">${rental.total_price}</TableCell>
+                  <TableCell className="text-right font-medium">৳{rental.total_price}</TableCell>
                 </TableRow>
               )
             })}

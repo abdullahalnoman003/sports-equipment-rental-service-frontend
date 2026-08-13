@@ -34,7 +34,7 @@ export function RentalsStats({ totals }: RentalsStatsProps) {
       </Card>
       <Card className="p-3">
         <CardContent className="text-center">
-          <p className="text-2xl font-bold text-primary">${totals.revenue.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-primary">৳{totals.revenue.toLocaleString()}</p>
           <p className="text-xs text-muted-foreground">Total Revenue</p>
         </CardContent>
       </Card>
