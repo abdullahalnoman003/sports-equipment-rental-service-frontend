@@ -1,9 +1,15 @@
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { PaymentsTable } from "../../../_components/payments-table"
 import { fetchPaymentHistory } from "../../../_actions/payments"
 import type { Payment } from "@/lib/types"
 
 export const revalidate = 30
+
+export const metadata: Metadata = {
+  title: "Payment History",
+  description: "View all your past payments and transactions on GearUp.",
+}
 
 export default async function CustomerPaymentsPage() {
   const res = await fetchPaymentHistory({ next: { revalidate: 30 } })

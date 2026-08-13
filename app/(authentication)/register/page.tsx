@@ -1,8 +1,15 @@
-"use client"
-
 import Link from "next/link"
+import type { Metadata } from "next"
 import { AuthShell } from "@/components/shared/auth-shell"
 import { RegisterForm } from "../_components/register-form"
+
+export const metadata: Metadata = {
+  title: "Create an Account",
+  description:
+    "Join GearUp as a customer or provider. Rent sports and outdoor gear, or list your own equipment and start earning.",
+  alternates: { canonical: "/register" },
+  robots: { index: false, follow: false },
+}
 
 export default function RegisterPage() {
   return (

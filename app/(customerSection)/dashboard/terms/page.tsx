@@ -1,6 +1,10 @@
-"use client"
-
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
+
+export const metadata: Metadata = {
+  title: "Terms & Privacy Policy",
+  description: "GearUp terms of service and privacy policy.",
+}
 
 const sections = [
   { title: "1. Acceptance of Terms", content: "By accessing GearUp, you agree to these Terms of Service. These apply to all users: customers, providers, and visitors." },

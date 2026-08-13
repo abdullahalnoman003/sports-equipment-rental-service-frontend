@@ -1,7 +1,11 @@
-"use client"
-
 import { Target, Users, Shield, Heart, Globe, Award, Leaf } from "lucide-react"
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
+
+export const metadata: Metadata = {
+  title: "About GearUp",
+  description: "About GearUp — making sports and outdoor gear accessible to all Bangladeshis.",
+}
 
 const values = [
   { icon: Target, title: "Our Mission", description: "To make sports and outdoor gear accessible to every Bangladeshi by building a trusted peer-to-peer rental community.", color: "text-blue-600 bg-blue-100 dark:bg-blue-950 dark:text-blue-400" },

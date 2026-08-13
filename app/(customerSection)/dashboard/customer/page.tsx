@@ -1,5 +1,6 @@
 import { Package, CreditCard, Clock, TrendingUp, ArrowUpRight } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { StatsCards } from "@/components/shared/stats-cards"
 import { StatusBadge } from "@/components/shared/status-badge"
@@ -9,6 +10,11 @@ import { fetchPaymentHistory } from "../../_actions/payments"
 import type { Rental, Payment } from "@/lib/types"
 
 export const revalidate = 30
+
+export const metadata: Metadata = {
+  title: "My Dashboard",
+  description: "Overview of your rental activity, active rentals, total spent, and recent payments on GearUp.",
+}
 
 export default async function CustomerDashboard() {
   const [rentalsRes, paymentsRes] = await Promise.all([

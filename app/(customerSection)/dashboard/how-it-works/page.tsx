@@ -1,7 +1,11 @@
-"use client"
-
 import { Search, UserCheck, CreditCard, Package, Star } from "lucide-react"
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
+
+export const metadata: Metadata = {
+  title: "How It Works",
+  description: "Renting and listing gear on GearUp made simple.",
+}
 
 const renterSteps = [
   { step: 1, icon: Search, title: "Browse & Find Gear", description: "Search by category, brand, or price. Use filters to find exactly what you need." },

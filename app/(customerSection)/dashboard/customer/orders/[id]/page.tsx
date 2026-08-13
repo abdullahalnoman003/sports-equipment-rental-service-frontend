@@ -1,12 +1,30 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { fetchRentalDetails } from "../../../../_actions/orders"
 import { OrderDetailClient } from "../../../../_components/order-detail-client"
 import type { Rental } from "@/lib/types"
 
 export const revalidate = 30
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const res = await fetchRentalDetails(id)
+  if (!res.success || !res.data) {
+    return { title: "Rental Order" }
+  }
+  const order = res.data as Rental
+  return {
+    title: `Order — ${order.gear.name}`,
+    description: `Details for your ${order.gear.name} rental order on GearUp.`,
+  }
+}
 
 export default async function CustomerOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: rentalId } = await params

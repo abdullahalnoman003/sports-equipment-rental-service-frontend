@@ -1,7 +1,11 @@
-"use client"
-
 import { Mail, Phone, MapPin, Clock } from "lucide-react"
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
+
+export const metadata: Metadata = {
+  title: "Contact Us",
+  description: "Have a question or need help with GearUp? Contact our support team.",
+}
 
 const contactInfo = [
   { icon: Mail, label: "Email Us", value: "hello@gearup.com.bd", color: "text-blue-600 bg-blue-100 dark:bg-blue-950 dark:text-blue-400" },

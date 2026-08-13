@@ -1,9 +1,15 @@
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { fetchMyRentals } from "../../../_actions/orders"
 import { CustomerOrdersClient } from "../../../_components/customer-orders-client"
 import type { Rental } from "@/lib/types"
 
 export const revalidate = 30
+
+export const metadata: Metadata = {
+  title: "My Rentals",
+  description: "Track and manage all your rental orders on GearUp.",
+}
 
 export default async function CustomerOrdersPage() {
   const res = await fetchMyRentals({ next: { revalidate: 30 } })
