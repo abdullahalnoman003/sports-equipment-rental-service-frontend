@@ -1,9 +1,15 @@
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { GearTable } from "../../../_components/gear-table"
 import { fetchAllGear } from "../../../_actions/gear"
 import type { Gear } from "@/lib/types"
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: "All Gear Listings",
+  description: "Browse and moderate all gear listings across the GearUp platform.",
+}
 
 export default async function AdminGearPage() {
   const res = await fetchAllGear({ next: { revalidate: 60 } })

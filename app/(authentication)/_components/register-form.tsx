@@ -1,7 +1,7 @@
 "use client"
 
 import { useActionState, useEffect, useState, useRef } from "react"
-import { Eye, EyeOff, User, Store, Check, Mail, UserRound } from "lucide-react"
+import { Eye, EyeOff, User, Store, Check, Mail, UserRound, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -22,11 +22,32 @@ type RegisterFormState = {
   errors?: { name?: string; email?: string; password?: string; role?: string }
 }
 
+function passwordScore(password: string) {
+  if (!password) return 0
+  let score = 0
+  if (password.length >= 8) score++
+  if (/[A-Z]/.test(password)) score++
+  if (/[0-9]/.test(password)) score++
+  if (/[^A-Za-z0-9]/.test(password)) score++
+  return score
+}
+
+const strengthMeta = [
+  { label: "Weak", className: "bg-destructive" },
+  { label: "Fair", className: "bg-amber-500" },
+  { label: "Good", className: "bg-yellow-400" },
+  { label: "Strong", className: "bg-emerald-500" },
+]
+
 export function RegisterForm() {
   const initialState: RegisterFormState = { success: false, statusCode: 0, message: "" }
   const [state, formAction, pending] = useActionState(registerAction, initialState)
   const [selectedRole, setSelectedRole] = useState<Role>("CUSTOMER")
-  const [clientErrors, setClientErrors] = useState<{ name?: string; email?: string; password?: string; role?: string }>({})
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [accepted, setAccepted] = useState(false)
+  const [clientErrors, setClientErrors] = useState<{ name?: string; email?: string; password?: string; role?: string; terms?: string }>({})
   const toastShown = useRef(false)
 
   useEffect(() => {
@@ -45,18 +66,19 @@ export function RegisterForm() {
   }, [state])
 
   const validate = (formData: FormData) => {
-    const name = formData.get("name") as string
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
+    const nameVal = formData.get("name") as string
+    const emailVal = formData.get("email") as string
+    const passwordVal = formData.get("password") as string
     const role = formData.get("role") as string
 
-    const errors: { name?: string; email?: string; password?: string; role?: string } = {}
-    if (!name.trim()) errors.name = "Name is required"
-    if (!email.trim()) errors.email = "Email is required"
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = "Please enter a valid email"
-    if (!password) errors.password = "Password is required"
-    else if (password.length < 8) errors.password = "Password must be at least 8 characters"
+    const errors: { name?: string; email?: string; password?: string; role?: string; terms?: string } = {}
+    if (!nameVal.trim()) errors.name = "Name is required"
+    if (!emailVal.trim()) errors.email = "Email is required"
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) errors.email = "Please enter a valid email"
+    if (!passwordVal) errors.password = "Password is required"
+    else if (passwordVal.length < 8) errors.password = "Password must be at least 8 characters"
     if (!role) errors.role = "Please select a role"
+    if (!accepted) errors.terms = "You must accept the Terms & Privacy Policy"
 
     setClientErrors(errors)
     return Object.keys(errors).length === 0
@@ -71,8 +93,14 @@ export function RegisterForm() {
   }
 
   const getFieldError = (field: string) => {
-    return clientErrors[field as keyof typeof clientErrors] || state.errors?.[field as keyof typeof state.errors]
+    return (
+      clientErrors[field as keyof typeof clientErrors] ||
+      state.errors?.[field as keyof typeof state.errors]
+    )
   }
+
+  const score = passwordScore(password)
+  const hasPassword = password.length > 0
 
   return (
     <div className="space-y-5">
@@ -121,19 +149,31 @@ export function RegisterForm() {
       <form action={formAction} onSubmit={handleSubmit} className="space-y-5">
         <input type="hidden" name="role" value={selectedRole} />
 
+        {!state.success && state.message && !state.errors && (
+          <div className="flex items-start gap-2.5 rounded-2xl border border-destructive/25 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+            <AlertCircle className="mt-0.5 size-4 shrink-0" />
+            {state.message}
+          </div>
+        )}
+
         <div className="space-y-2">
           <Label htmlFor="name" className="text-sm font-medium">
             Full name
           </Label>
-          <div className="relative">
-            <UserRound className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="group relative">
+            <UserRound className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input
               id="name"
               name="name"
               type="text"
               placeholder="John Doe"
               autoComplete="name"
-              className={cn("h-11 rounded-2xl pl-10", getFieldError("name") && "border-destructive")}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={cn(
+                "h-11 rounded-2xl border-border bg-background pl-10 transition-shadow focus-visible:ring-primary/30",
+                getFieldError("name") && "border-destructive"
+              )}
             />
           </div>
           {getFieldError("name") && (
@@ -145,15 +185,20 @@ export function RegisterForm() {
           <Label htmlFor="email" className="text-sm font-medium">
             Email address
           </Label>
-          <div className="relative">
-            <Mail className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="group relative">
+            <Mail className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input
               id="email"
               name="email"
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
-              className={cn("h-11 rounded-2xl pl-10", getFieldError("email") && "border-destructive")}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={cn(
+                "h-11 rounded-2xl border-border bg-background pl-10 transition-shadow focus-visible:ring-primary/30",
+                getFieldError("email") && "border-destructive"
+              )}
             />
           </div>
           {getFieldError("email") && (
@@ -162,11 +207,59 @@ export function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password" className="text-sm font-medium">
-            Password
-          </Label>
-          <PasswordInput fieldError={getFieldError("password")} />
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password" className="text-sm font-medium">
+              Password
+            </Label>
+            {hasPassword && (
+              <span className="text-xs font-medium text-muted-foreground">
+                {strengthMeta[score - 1]?.label ?? "Too short"}
+              </span>
+            )}
+          </div>
+          <PasswordInput
+            fieldError={getFieldError("password")}
+            password={password}
+            onPasswordChange={setPassword}
+          />
+          {hasPassword && (
+            <div className="flex items-center gap-1.5">
+              {[0, 1, 2, 3].map((i) => (
+                <span
+                  key={i}
+                  className={cn(
+                    "h-1 flex-1 rounded-full transition-colors",
+                    i < score
+                      ? strengthMeta[score - 1]?.className
+                      : "bg-muted"
+                  )}
+                />
+              ))}
+            </div>
+          )}
         </div>
+
+        <label className="flex items-start gap-2.5 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={accepted}
+            onChange={(e) => setAccepted(e.target.checked)}
+            className="mt-0.5 size-4 shrink-0 rounded border-border accent-primary"
+          />
+          <span>
+            I agree to the{" "}
+            <a href="/terms" className="font-medium text-primary hover:underline">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="/terms" className="font-medium text-primary hover:underline">
+              Privacy Policy
+            </a>
+          </span>
+        </label>
+        {getFieldError("terms") && (
+          <p className="text-xs text-destructive">{getFieldError("terms")}</p>
+        )}
 
         <Button
           type="submit"
@@ -192,19 +285,32 @@ export function RegisterForm() {
   )
 }
 
-function PasswordInput({ fieldError }: { fieldError?: string }) {
+function PasswordInput({
+  fieldError,
+  password,
+  onPasswordChange,
+}: {
+  fieldError?: string
+  password: string
+  onPasswordChange: (value: string) => void
+}) {
   const [showPassword, setShowPassword] = useState(false)
 
   return (
     <div>
-      <div className="relative">
+      <div className="group relative">
         <Input
           id="password"
           name="password"
           type={showPassword ? "text" : "password"}
           placeholder="Min. 8 characters"
           autoComplete="new-password"
-          className={cn("h-11 rounded-2xl pl-4 pr-11", fieldError && "border-destructive")}
+          value={password}
+          onChange={(e) => onPasswordChange(e.target.value)}
+          className={cn(
+            "h-11 rounded-2xl border-border bg-background pl-4 pr-11 transition-shadow focus-visible:ring-primary/30",
+            fieldError && "border-destructive"
+          )}
         />
         <button
           type="button"

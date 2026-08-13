@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { RentalsStats } from "../../../_components/rentals-stats"
 import { RentalsTable } from "../../../_components/rentals-table"
@@ -5,6 +6,11 @@ import { fetchAllRentals } from "../../../_actions/rentals"
 import type { Rental } from "@/lib/types"
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: "All Rentals",
+  description: "Inspect all rental orders across the GearUp platform.",
+}
 
 export default async function AdminRentalsPage() {
   const res = await fetchAllRentals({ next: { revalidate: 60 } })

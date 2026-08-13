@@ -1,9 +1,15 @@
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { fetchAllUsers } from "../../../_actions/users"
 import { AdminUsersClient } from "../../../_components/admin-users-client"
 import type { User } from "@/lib/types"
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: "User Management",
+  description: "View, search, and manage all registered users on GearUp.",
+}
 
 export default async function AdminUsersPage() {
   const res = await fetchAllUsers({ next: { revalidate: 60 } })

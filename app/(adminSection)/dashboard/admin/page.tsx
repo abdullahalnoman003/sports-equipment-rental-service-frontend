@@ -1,4 +1,5 @@
 import { Users, Package, CreditCard, TrendingUp, Shield } from "lucide-react"
+import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { StatsCards } from "../../_components/stats-cards"
 import { RecentUsers } from "../../_components/recent-users"
@@ -9,6 +10,11 @@ import { fetchAllGear } from "../../_actions/gear"
 import type { User, Rental } from "@/lib/types"
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: "Platform Overview",
+  description: "Monitor users, gear, rentals, and revenue across the GearUp platform.",
+}
 
 export default async function AdminDashboard() {
   const [usersRes, rentalsRes, gearRes] = await Promise.all([

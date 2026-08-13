@@ -18,6 +18,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { CategoryForm } from "./category-form"
 import { fetchAllCategories, deleteCategory } from "../_actions/categories"
 import toast from "react-hot-toast"
@@ -29,6 +40,7 @@ export function CategoriesTable() {
   const [error, setError] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
 
   const loadCategories = async () => {
     try {
@@ -73,15 +85,16 @@ export function CategoriesTable() {
     return () => { cancelled = true }
   }, [])
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this category?")) return
-    const res = await deleteCategory(id)
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    const res = await deleteCategory(deleteTarget.id)
     if (res.success) {
-      setCategories((prev) => prev.filter((c) => c.id !== id))
+      setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id))
       toast.success("Category deleted!")
     } else {
       toast.error(res.message || "Failed to delete category")
     }
+    setDeleteTarget(null)
   }
 
   const handleEdit = (category: Category) => {
@@ -179,7 +192,7 @@ export function CategoriesTable() {
                       variant="ghost"
                       size="icon"
                       className="size-8 text-destructive"
-                      onClick={() => handleDelete(category.id)}
+                      onClick={() => setDeleteTarget(category)}
                     >
                       <Trash2 className="size-4" />
                     </Button>
@@ -195,6 +208,32 @@ export function CategoriesTable() {
           </div>
         )}
       </div>
+
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogMedia>
+              <Trash2 />
+            </AlertDialogMedia>
+            <AlertDialogTitle>Delete this category?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove the category. Categories that still have gear assigned
+              cannot be deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={handleDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
