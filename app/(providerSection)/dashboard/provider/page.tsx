@@ -1,5 +1,6 @@
 import { Package, CreditCard, Clock, Plus, ArrowUpRight, Store } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { StatsCards } from "@/components/shared/stats-cards"
@@ -10,6 +11,11 @@ import { getMe } from "@/service/getMe"
 import type { Gear, RentalWithPayment } from "@/lib/types"
 
 export const revalidate = 30
+
+export const metadata: Metadata = {
+  title: "Provider Dashboard",
+  description: "Track your inventory, orders, and earnings at a glance on your GearUp provider dashboard.",
+}
 
 export default async function ProviderDashboard() {
   const userRes = await getMe()

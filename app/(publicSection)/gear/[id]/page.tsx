@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import {
   Home,
   ChevronRight,
@@ -25,6 +26,29 @@ import { RentForm } from "../../_components/gear/rent-form"
 import type { Gear } from "@/lib/types"
 
 export const revalidate = 60
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const res = await fetchGearById(id, { next: { revalidate: 60 } })
+  if (!res.success || !res.data) {
+    return { title: "Gear Not Found" }
+  }
+  const gear = res.data as Gear
+  return {
+    title: gear.name,
+    description: `Rent ${gear.name} by ${gear.brand} — ৳${gear.price}/day. ${gear.description?.slice(0, 150) ?? ""} Book securely on GearUp.`,
+    alternates: { canonical: `/gear/${gear.id}` },
+    openGraph: {
+      title: `${gear.name} | GearUp`,
+      description: `Rent ${gear.name} by ${gear.brand} for ৳${gear.price} per day on GearUp.`,
+      images: gear.image ? [{ url: gear.image, alt: gear.name }] : undefined,
+    },
+  }
+}
 
 export default async function GearDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

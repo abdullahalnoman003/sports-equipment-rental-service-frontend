@@ -5,8 +5,10 @@ import { PageHero } from "@/components/shared/page-hero"
 import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
-  title: "Terms & Privacy Policy | GearUp Bangladesh",
-  description: "GearUp Bangladesh terms of service and privacy policy.",
+  title: "Terms & Privacy Policy",
+  description:
+    "GearUp terms of service and privacy policy. Understand your rights and responsibilities when using the GearUp platform.",
+  alternates: { canonical: "/terms" },
 }
 
 const sections = [

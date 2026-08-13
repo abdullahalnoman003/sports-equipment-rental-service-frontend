@@ -17,8 +17,10 @@ import { PageHero } from "@/components/shared/page-hero"
 import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
-  title: "About Us | GearUp Bangladesh",
-  description: "Learn about GearUp, Bangladesh's first peer-to-peer sports and outdoor gear rental marketplace.",
+  title: "About Us",
+  description:
+    "Learn about GearUp, Bangladesh's first peer-to-peer sports and outdoor gear rental marketplace, our story, values, and mission.",
+  alternates: { canonical: "/about" },
 }
 
 const values = [

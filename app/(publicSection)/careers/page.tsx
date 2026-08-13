@@ -19,8 +19,10 @@ import { PageHero } from "@/components/shared/page-hero"
 import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
-  title: "Careers | GearUp Bangladesh",
-  description: "Join the GearUp team and help build Bangladesh's leading gear rental platform.",
+  title: "Careers",
+  description:
+    "Join the GearUp team and help build Bangladesh's leading sports and outdoor gear rental platform. Explore open positions today.",
+  alternates: { canonical: "/careers" },
 }
 
 const openings = [

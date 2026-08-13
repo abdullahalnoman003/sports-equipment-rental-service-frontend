@@ -25,9 +25,17 @@ interface GearClientProps {
   gear: Gear[]
   categories: string[]
   initialCategory?: string
+  initialMinPrice?: number
+  initialMaxPrice?: number
 }
 
-export function GearClient({ gear, categories, initialCategory }: GearClientProps) {
+export function GearClient({
+  gear,
+  categories,
+  initialCategory,
+  initialMinPrice,
+  initialMaxPrice,
+}: GearClientProps) {
   const router = useRouter()
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState(
@@ -35,6 +43,13 @@ export function GearClient({ gear, categories, initialCategory }: GearClientProp
   )
   const [sortBy, setSortBy] = useState<"name" | "price-low" | "price-high">("name")
   const [page, setPage] = useState(1)
+  const [prevCategory, setPrevCategory] = useState(initialCategory)
+
+  if (prevCategory !== initialCategory) {
+    setPrevCategory(initialCategory)
+    setCategory(initialCategory && initialCategory !== "All" ? initialCategory : "All")
+    setPage(1)
+  }
 
   const allCategories = ["All", ...categories]
 
@@ -57,6 +72,24 @@ export function GearClient({ gear, categories, initialCategory }: GearClientProp
 
   const inStockCount = filtered.filter((g) => g.quantity > 0).length
 
+  function pushFilters(next?: { category?: string; minPrice?: number | null; maxPrice?: number | null }) {
+    const params = new URLSearchParams(window.location.search)
+    if (next?.category !== undefined) {
+      if (next.category === "All") params.delete("category")
+      else params.set("category", next.category)
+    }
+    if (next?.minPrice !== undefined) {
+      if (next.minPrice === null || next.minPrice <= 0) params.delete("minimumPrice")
+      else params.set("minimumPrice", String(next.minPrice))
+    }
+    if (next?.maxPrice !== undefined) {
+      if (next.maxPrice === null || next.maxPrice <= 0) params.delete("maximumPrice")
+      else params.set("maximumPrice", String(next.maxPrice))
+    }
+    const qs = params.toString()
+    router.replace(qs ? `/gear?${qs}` : "/gear", { scroll: false })
+  }
+
   function handleSearchChange(value: string) {
     setSearch(value)
     setPage(1)
@@ -65,20 +98,17 @@ export function GearClient({ gear, categories, initialCategory }: GearClientProp
   function handleCategoryChange(value: string) {
     setCategory(value)
     setPage(1)
-
-    const params = new URLSearchParams(window.location.search)
-    if (value === "All") {
-      params.delete("category")
-    } else {
-      params.set("category", value)
-    }
-    const qs = params.toString()
-    router.replace(qs ? `/gear?${qs}` : "/gear", { scroll: false })
+    pushFilters({ category: value })
   }
 
   function handleSortChange(value: "name" | "price-low" | "price-high") {
     setSortBy(value)
     setPage(1)
+  }
+
+  function handlePriceChange(minPrice?: number, maxPrice?: number) {
+    setPage(1)
+    pushFilters({ minPrice: minPrice ?? null, maxPrice: maxPrice ?? null })
   }
 
   return (
@@ -134,6 +164,9 @@ export function GearClient({ gear, categories, initialCategory }: GearClientProp
         onSortChange={handleSortChange}
         categories={allCategories}
         resultCount={filtered.length}
+        minPrice={initialMinPrice}
+        maxPrice={initialMaxPrice}
+        onPriceChange={handlePriceChange}
       />
 
       {paged.length === 0 ? (
@@ -146,7 +179,8 @@ export function GearClient({ gear, categories, initialCategory }: GearClientProp
           </div>
           <h2 className="mt-6 text-2xl font-bold tracking-tight">No gear found</h2>
           <p className="mt-2 max-w-sm text-muted-foreground">
-            We could not find anything matching your search. Try a different keyword or browse all categories.
+            We could not find anything matching your search. Try a different keyword, adjust
+            your price range, or browse all categories.
           </p>
           <Button
             variant="outline"
@@ -154,6 +188,7 @@ export function GearClient({ gear, categories, initialCategory }: GearClientProp
             onClick={() => {
               handleSearchChange("")
               handleCategoryChange("All")
+              handlePriceChange(undefined, undefined)
             }}
           >
             Reset filters

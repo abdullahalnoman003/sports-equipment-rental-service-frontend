@@ -1,6 +1,13 @@
 import Link from "next/link"
 import { Check, CalendarCheck, Mail, Package, ShieldCheck, ArrowRight, Store } from "lucide-react"
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
+
+export const metadata: Metadata = {
+  title: "Payment Successful",
+  description: "Your rental payment was successful. Track your rental status from your GearUp dashboard.",
+  robots: { index: false, follow: false },
+}
 
 export default function PaymentSuccessPage() {
   return (

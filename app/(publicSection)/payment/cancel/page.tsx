@@ -1,6 +1,13 @@
 import Link from "next/link"
 import { X, RefreshCw, ShoppingBag, ShieldCheck, Headset, ArrowRight } from "lucide-react"
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
+
+export const metadata: Metadata = {
+  title: "Payment Cancelled",
+  description: "Your rental payment was cancelled. No money was charged — retry whenever you are ready.",
+  robots: { index: false, follow: false },
+}
 
 export default function PaymentCancelPage() {
   return (

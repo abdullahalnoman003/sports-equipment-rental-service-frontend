@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { Footer } from "@/components/shared/footer";
 import { Navbar } from "@/components/shared/navbar";
 import { getMe } from "@/service/getMe";
+
+export const metadata: Metadata = {
+  title: "My Profile",
+  description: "Update your GearUp profile, contact details, and account information.",
+  robots: { index: false, follow: false },
+};
 
 const ProfileLayout = async ({ children }: { children: React.ReactNode }) => {
     const user = await getMe()

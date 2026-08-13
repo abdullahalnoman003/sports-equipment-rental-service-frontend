@@ -16,8 +16,10 @@ import { PageHero } from "@/components/shared/page-hero"
 import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
-  title: "How It Works | GearUp Bangladesh",
-  description: "Learn how GearUp works: rent sports gear or list your own in three simple steps.",
+  title: "How It Works",
+  description:
+    "Learn how GearUp works — rent sports gear in four simple steps or list your own equipment and start earning in three.",
+  alternates: { canonical: "/how-it-works" },
 }
 
 const renterSteps = [

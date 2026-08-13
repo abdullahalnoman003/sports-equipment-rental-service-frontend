@@ -1,8 +1,14 @@
-"use client"
-
 import { Mail, Phone, MapPin, MessageSquare, Clock, Send, Headset } from "lucide-react"
+import type { Metadata } from "next"
 import { PageHero } from "@/components/shared/page-hero"
 import { ContactForm } from "../_components/contact/contact-form"
+
+export const metadata: Metadata = {
+  title: "Contact Us",
+  description:
+    "Get in touch with the GearUp team. Questions, suggestions, or support — our team responds within 24 hours.",
+  alternates: { canonical: "/contact" },
+}
 
 const contactInfo = [
   { icon: Mail, label: "Email Us", value: "hello@gearup.com.bd", href: "mailto:hello@gearup.com.bd" },

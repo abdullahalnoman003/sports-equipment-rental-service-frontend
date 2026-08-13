@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Star, ShieldCheck, Headset } from "lucide-react"
+import { Star, ShieldCheck, Headset, Sparkles } from "lucide-react"
 import { Logo } from "@/components/shared/logo"
 
 interface AuthShellProps {
@@ -12,9 +12,15 @@ interface AuthShellProps {
 }
 
 const bullets = [
-  { icon: Star, text: "Thousands of gear items from trusted local providers" },
   { icon: ShieldCheck, text: "Payments secured end to end with Stripe" },
+  { icon: Star, text: "Thousands of gear items from trusted local providers" },
   { icon: Headset, text: "Friendly support available 7 days a week" },
+]
+
+const stats = [
+  { value: "12k+", label: "Happy renters" },
+  { value: "2.5k+", label: "Gear listed" },
+  { value: "64", label: "Districts" },
 ]
 
 export function AuthShell({ eyebrow, title, subtitle, children, footer }: AuthShellProps) {
@@ -30,33 +36,35 @@ export function AuthShell({ eyebrow, title, subtitle, children, footer }: AuthSh
           sizes="(min-width: 1024px) 50vw, 46vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/80 to-emerald-950/95" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/85 to-emerald-950/95" />
         <div className="absolute inset-0 bg-grid-faint [background-image:linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] [background-size:3rem_3rem]" />
+        <div className="pointer-events-none absolute -left-24 top-1/4 size-80 rounded-full bg-white/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -right-20 size-80 rounded-full bg-gold/20 blur-3xl" />
 
-        <div className="relative z-10 flex h-full flex-col justify-between p-12">
-          <Link href="/" aria-label="GearUp home">
-            <span className="flex w-fit items-center gap-2.5 text-white">
-              <LogoMarkWhite />
+        <div className="relative z-10 flex h-full w-full flex-col justify-between p-10 xl:p-12">
+          <Link href="/" aria-label="GearUp home" className="w-fit">
+            <span className="flex items-center gap-2.5 text-white">
+              <LogoWhite />
               <span className="text-xl font-bold tracking-tight">
                 GearUp<span className="text-white/70">.</span>
               </span>
             </span>
           </Link>
 
-          <div>
+          <div className="space-y-6">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/90 backdrop-blur-sm">
-              <span className="size-1.5 rounded-full bg-white animate-pulse" />
+              <span className="size-1.5 animate-pulse rounded-full bg-white" />
               Gear rental, made simple
             </span>
-            <h2 className="mt-5 max-w-md text-4xl font-bold leading-tight tracking-tight text-white xl:text-5xl">
+            <h2 className="max-w-md text-4xl font-bold leading-tight tracking-tight text-white xl:text-5xl">
               Your next adventure starts here
             </h2>
-            <p className="mt-4 max-w-md text-white/80">
+            <p className="max-w-md text-white/80">
               Rent sports and outdoor gear by the day, or list your own equipment
-              and start earning.
+              and start earning — all in one place.
             </p>
 
-            <ul className="mt-8 space-y-3">
+            <ul className="space-y-3">
               {bullets.map((b) => (
                 <li key={b.text} className="flex items-center gap-3 text-sm text-white/90">
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm">
@@ -66,16 +74,34 @@ export function AuthShell({ eyebrow, title, subtitle, children, footer }: AuthSh
                 </li>
               ))}
             </ul>
+          </div>
 
-            <div className="mt-10 flex items-center gap-3 rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
-              <div className="flex -space-x-1">
+          <div className="space-y-4">
+            <div className="relative rounded-2xl bg-white/10 p-5 backdrop-blur-sm">
+              <Sparkles className="absolute -top-3 right-4 size-5 text-gold" />
+              <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} className="size-4 fill-gold text-gold" />
+                  <Star key={i} className="size-3.5 fill-gold text-gold" />
                 ))}
+                <span className="ml-2 text-xs font-semibold text-white">4.9/5</span>
               </div>
-              <p className="text-sm text-white/90">
-                Rated <span className="font-bold">4.9/5</span> by 12,000+ happy renters
+              <p className="mt-2 text-sm leading-relaxed text-white/90">
+                &ldquo;Rented a tent for our Cox&apos;s Bazar trip — seamless booking,
+                spotless gear, and the provider even delivered it early.&rdquo;
               </p>
+              <p className="mt-2 text-xs font-medium text-white/70">— Rafi, Dhaka</p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              {stats.map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center backdrop-blur-sm"
+                >
+                  <p className="text-lg font-bold leading-none text-white">{s.value}</p>
+                  <p className="mt-1 text-xs text-white/70">{s.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -85,7 +111,7 @@ export function AuthShell({ eyebrow, title, subtitle, children, footer }: AuthSh
       <div className="relative flex flex-1 items-center justify-center px-4 py-12 sm:px-8">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -right-32 -top-32 size-96 rounded-full bg-primary/5 blur-3xl" />
-          <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-primary/5 blur-3xl" />
+          <div className="absolute -bottom-32 -left-32 size-96 rounded-full bg-gold/10 blur-3xl" />
         </div>
 
         <div className="relative w-full max-w-md">
@@ -102,8 +128,9 @@ export function AuthShell({ eyebrow, title, subtitle, children, footer }: AuthSh
             <p className="mt-2 text-muted-foreground">{subtitle}</p>
           </div>
 
-          <div className="mt-8 rounded-3xl border border-border bg-card p-6 shadow-xl shadow-primary/5 sm:p-8">
-            {children}
+          <div className="mt-8 overflow-hidden rounded-3xl border border-border bg-card shadow-xl shadow-primary/5">
+            <div className="h-1.5 bg-gradient-to-r from-primary via-emerald-500 to-gold" />
+            <div className="p-6 sm:p-8">{children}</div>
           </div>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>
@@ -113,7 +140,7 @@ export function AuthShell({ eyebrow, title, subtitle, children, footer }: AuthSh
   )
 }
 
-function LogoMarkWhite() {
+function LogoWhite() {
   return (
     <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-9" aria-hidden="true">
       <rect x="1.5" y="1.5" width="45" height="45" rx="14" fill="white" />

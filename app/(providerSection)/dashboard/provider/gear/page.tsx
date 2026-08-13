@@ -1,4 +1,5 @@
 import Link from "next/link"
+import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { fetchProviderGear } from "../../../_actions/gear"
@@ -7,6 +8,11 @@ import { ProviderGearClient } from "../../../_components/provider-gear-client"
 import type { Gear } from "@/lib/types"
 
 export const revalidate = 30
+
+export const metadata: Metadata = {
+  title: "My Gear",
+  description: "Manage your listed gear inventory on the GearUp provider dashboard.",
+}
 
 export default async function ProviderGearPage() {
   const userRes = await getMe()
