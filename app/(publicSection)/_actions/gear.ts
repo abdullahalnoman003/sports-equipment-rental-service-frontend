@@ -10,8 +10,8 @@ interface FetchOptions {
   }
 }
 
-export async function fetchAllGear(options?: FetchOptions) {
-  const gear = await api("/api/gear", { next: options?.next })
+export async function fetchAllGear(query = "", options?: FetchOptions) {
+  const gear = await api(`/api/gear${query ? `?${query}` : ""}`, { next: options?.next })
   return gear
 }
 

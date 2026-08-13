@@ -104,7 +104,7 @@ export const registerAction = async (
     body: JSON.stringify({ name, email, password, role }),
   })
 
-  if (result.success) redirect("/login")
+  if (result.success) redirect("/login?registered=1")
 
   return { success: result.success, statusCode: result.statusCode, message: result.message }
 }
