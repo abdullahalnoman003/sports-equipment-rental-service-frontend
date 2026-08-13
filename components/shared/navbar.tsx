@@ -90,7 +90,7 @@ export function Navbar({ user }: { user: ApiResponse<UserProfile> | null }) {
           className="group flex items-center gap-2.5 transition-opacity hover:opacity-90"
           aria-label="GearUp home"
         >
-          <span className="transition-transform duration-300 group-hover:rotate-12">
+          <span className="transition-transform duration-300 ">
             <Logo showText={false} className="size-9" />
           </span>
           <span className="text-lg font-bold tracking-tight text-foreground">

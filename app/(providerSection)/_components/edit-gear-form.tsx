@@ -144,7 +144,7 @@ export function EditGearForm({ gear, onSuccess, onCancel }: EditGearFormProps) {
               className="flex-1"
             />
           </div>
-          <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-muted/50">
+          <div className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-muted/50">
             {form.image && !imageError && (form.image.startsWith("http://") || form.image.startsWith("https://")) ? (
               <Image
                 src={form.image}
