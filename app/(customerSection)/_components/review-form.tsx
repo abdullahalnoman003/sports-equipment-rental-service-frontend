@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { submitReview } from "../_actions/orders"
+import { friendlyError } from "@/lib/messages"
 import { z } from "zod"
 import toast from "react-hot-toast"
 
@@ -55,7 +56,7 @@ export function ReviewForm({ rentalId, onSubmit }: ReviewFormProps) {
       } else if (res.message.toLowerCase().includes("already reviewed")) {
         setAlreadyReviewed(true)
       } else {
-        toast.error(res.message || "Failed to submit review")
+        toast.error(friendlyError(res.message, "Please login to submit a review"))
       }
     } catch {
       toast.error("Failed to submit review")

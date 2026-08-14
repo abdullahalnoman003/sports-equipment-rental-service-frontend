@@ -9,6 +9,7 @@ import toast from "react-hot-toast"
 import { BrandLoader } from "@/components/shared/loader"
 import { CalendarDays, BadgeCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { friendlyError } from "@/lib/messages"
 
 const ROLE_META: Record<string, { label: string; className: string }> = {
   CUSTOMER: { label: "Customer", className: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300" },
@@ -27,7 +28,7 @@ export default function ProfilePage() {
         if (res.success) {
           setProfile(res.data as UserProfile)
         } else {
-          toast.error(res.message || "Failed to fetch profile")
+          toast.error(friendlyError(res.message, "Please login to view your profile"))
         }
       } catch {
         toast.error("Failed to fetch profile")

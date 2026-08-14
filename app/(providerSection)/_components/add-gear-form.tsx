@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select"
 import { addNewGear } from "../_actions/gear"
 import { fetchAllCategories } from "@/app/(publicSection)/_actions/gear"
+import { friendlyError } from "@/lib/messages"
 import { z } from "zod"
 import toast from "react-hot-toast"
 import type { Category } from "@/lib/types"
@@ -121,7 +122,7 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
         toast.success("Gear added successfully!")
         onSuccess?.()
       } else {
-        toast.error(res.message || "Failed to add gear")
+        toast.error(friendlyError(res.message, "Please login to add gear"))
       }
     } catch {
       toast.error("Failed to add gear")

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { createCategory, updateCategory } from "../_actions/categories"
+import { friendlyError } from "@/lib/messages"
 import { z } from "zod"
 import toast from "react-hot-toast"
 import type { Category } from "@/lib/types"
@@ -60,7 +61,7 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
         toast.success(isEdit ? "Category updated!" : "Category created!")
         onSuccess?.()
       } else {
-        toast.error(res.message || `Failed to ${isEdit ? "update" : "create"} category`)
+        toast.error(friendlyError(res.message, `Please login to ${isEdit ? "update" : "create"} categories`))
       }
     } catch {
       toast.error(`Failed to ${isEdit ? "update" : "create"} category`)

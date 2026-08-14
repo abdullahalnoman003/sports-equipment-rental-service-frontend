@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select"
 import { updateGearById } from "../_actions/gear"
 import { fetchAllCategories } from "@/app/(publicSection)/_actions/gear"
+import { friendlyError } from "@/lib/messages"
 import toast from "react-hot-toast"
 import type { Category, Gear } from "@/lib/types"
 
@@ -110,7 +111,7 @@ export function EditGearForm({ gear, onSuccess, onCancel }: EditGearFormProps) {
         toast.success("Gear updated successfully!")
         onSuccess?.()
       } else {
-        toast.error(res.message || "Failed to update gear")
+        toast.error(friendlyError(res.message, "Please login to edit gear"))
       }
     } catch {
       toast.error("Failed to update gear")

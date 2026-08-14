@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Trash2 } from "lucide-react"
 import { GearTable } from "./gear-table"
 import { removeGearById } from "../_actions/gear"
+import { friendlyError } from "@/lib/messages"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,7 +38,7 @@ export function ProviderGearClient({ gear }: ProviderGearClientProps) {
       toast.success("Gear deleted!")
       router.refresh()
     } else {
-      toast.error(res.message || "Failed to delete gear")
+      toast.error(friendlyError(res.message, "Please login to manage your gear"))
     }
   }
 

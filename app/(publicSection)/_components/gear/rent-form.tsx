@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createRental } from "../../_actions/gear"
+import { friendlyError } from "@/lib/messages"
 import toast from "react-hot-toast"
 import type { Gear } from "@/lib/types"
 
@@ -57,7 +58,7 @@ export function RentForm({ gear }: RentFormProps) {
         setStartDate("")
         setEndDate("")
       } else {
-        toast.error(res.message || "Failed to create rental")
+        toast.error(friendlyError(res.message, "Please login to rent gear"))
       }
     } catch {
       toast.error("Failed to create rental")

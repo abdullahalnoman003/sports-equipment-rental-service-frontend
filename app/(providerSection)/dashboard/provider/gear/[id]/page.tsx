@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { EditGearForm } from "../../../../_components/edit-gear-form"
 import { fetchGearById } from "@/app/(publicSection)/_actions/gear"
+import { friendlyError } from "@/lib/messages"
 import toast from "react-hot-toast"
 import type { Gear } from "@/lib/types"
 
@@ -23,7 +24,7 @@ export default function EditGearPage({ params }: { params: Promise<{ id: string 
         if (res.success) {
           setGear(res.data as Gear)
         } else {
-          toast.error(res.message || "Gear not found")
+          toast.error(friendlyError(res.message, "Please login to view this gear"))
           router.push("/dashboard/provider/gear")
         }
       } catch {

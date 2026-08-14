@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { OrdersTable } from "./orders-table"
 import { createPaymentSession } from "../_actions/orders"
+import { friendlyError } from "@/lib/messages"
 import toast from "react-hot-toast"
 import type { Rental } from "@/lib/types"
 
@@ -18,7 +19,7 @@ export function CustomerOrdersClient({ orders }: CustomerOrdersClientProps) {
     if (res.success && res.data) {
       window.location.href = res.data as string
     } else {
-      toast.error(res.message || "Failed to create payment")
+      toast.error(friendlyError(res.message, "Please login to view your orders"))
     }
   }
 

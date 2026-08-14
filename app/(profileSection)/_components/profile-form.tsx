@@ -21,6 +21,7 @@ import { updateUserProfile } from "../_actions/profile"
 import { z } from "zod"
 import toast from "react-hot-toast"
 import { cn } from "@/lib/utils"
+import { friendlyError } from "@/lib/messages"
 
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -116,7 +117,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       if (res.success) {
         toast.success("Profile updated!")
       } else {
-        toast.error(res.message || "Failed to update profile")
+        toast.error(friendlyError(res.message, "Please login to update your profile"))
       }
     } catch {
       toast.error("Failed to update profile")

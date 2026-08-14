@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { CategoryForm } from "./category-form"
 import { fetchAllCategories, deleteCategory } from "../_actions/categories"
+import { friendlyError } from "@/lib/messages"
 import toast from "react-hot-toast"
 import type { Category } from "@/lib/types"
 
@@ -48,8 +49,8 @@ export function CategoriesTable() {
       if (res.success) {
         setCategories(res.data as Category[])
       } else {
-        setError(res.message || "Failed to fetch categories")
-        toast.error(res.message || "Failed to fetch categories")
+        setError(friendlyError(res.message, "Please login to manage categories"))
+        toast.error(friendlyError(res.message, "Please login to manage categories"))
       }
     } catch {
       setError("Failed to fetch categories")
@@ -68,8 +69,8 @@ export function CategoriesTable() {
           if (res.success) {
             setCategories(res.data as Category[])
           } else {
-            setError(res.message || "Failed to fetch categories")
-            toast.error(res.message || "Failed to fetch categories")
+            setError(friendlyError(res.message, "Please login to manage categories"))
+            toast.error(friendlyError(res.message, "Please login to manage categories"))
           }
         }
       } catch {
@@ -92,7 +93,7 @@ export function CategoriesTable() {
       setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id))
       toast.success("Category deleted!")
     } else {
-      toast.error(res.message || "Failed to delete category")
+      toast.error(friendlyError(res.message, "Please login to manage categories"))
     }
     setDeleteTarget(null)
   }

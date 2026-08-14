@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { OrdersTable } from "./orders-table"
 import { updateOrderStatus } from "../_actions/gear"
+import { friendlyError } from "@/lib/messages"
 import toast from "react-hot-toast"
 import type { RentalWithPayment } from "@/lib/types"
 
@@ -19,7 +20,7 @@ export function ProviderOrdersClient({ orders }: ProviderOrdersClientProps) {
       toast.success("Order status updated!")
       router.refresh()
     } else {
-      toast.error(res.message || "Failed to update status")
+      toast.error(friendlyError(res.message, "Please login to manage orders"))
     }
   }
 
