@@ -4,7 +4,7 @@ import { GearTable } from "../../../_components/gear-table"
 import { fetchAllGear } from "../../../_actions/gear"
 import type { Gear } from "@/lib/types"
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "All Gear Listings",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function AdminGearPage() {
-  const res = await fetchAllGear({ next: { revalidate: 60 } })
+  const res = await fetchAllGear()
   const gear = res.success ? (res.data as Gear[]) : []
 
   return (

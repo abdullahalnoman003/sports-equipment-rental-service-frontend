@@ -9,7 +9,7 @@ import { fetchAllRentals } from "../../_actions/rentals"
 import { fetchAllGear } from "../../_actions/gear"
 import type { User, Rental } from "@/lib/types"
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Platform Overview",
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
 
 export default async function AdminDashboard() {
   const [usersRes, rentalsRes, gearRes] = await Promise.all([
-    fetchAllUsers({ next: { revalidate: 60 } }),
-    fetchAllRentals({ next: { revalidate: 60 } }),
-    fetchAllGear({ next: { revalidate: 60 } }),
+    fetchAllUsers(),
+    fetchAllRentals(),
+    fetchAllGear(),
   ])
 
   const users = usersRes.success ? (usersRes.data as User[]) : []

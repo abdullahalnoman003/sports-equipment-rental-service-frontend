@@ -7,7 +7,7 @@ import { getMe } from "@/service/getMe"
 import { ProviderGearClient } from "../../../_components/provider-gear-client"
 import type { Gear } from "@/lib/types"
 
-export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "My Gear",
@@ -18,7 +18,7 @@ export default async function ProviderGearPage() {
   const userRes = await getMe()
   const userEmail = userRes.success ? (userRes.data as { email: string }).email : ""
 
-  const res = await fetchProviderGear({ next: { revalidate: 30 } })
+  const res = await fetchProviderGear()
   const allGear = res.success ? (res.data as Gear[]) : []
   const gear = userEmail ? allGear.filter((g) => g.provider_email === userEmail) : allGear
 

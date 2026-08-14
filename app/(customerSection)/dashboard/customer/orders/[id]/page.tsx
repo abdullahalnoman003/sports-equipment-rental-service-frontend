@@ -7,7 +7,7 @@ import { fetchRentalDetails } from "../../../../_actions/orders"
 import { OrderDetailClient } from "../../../../_components/order-detail-client"
 import type { Rental } from "@/lib/types"
 
-export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export async function generateMetadata({
   params,
@@ -28,7 +28,7 @@ export async function generateMetadata({
 
 export default async function CustomerOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: rentalId } = await params
-  const res = await fetchRentalDetails(rentalId, { next: { revalidate: 30 } })
+  const res = await fetchRentalDetails(rentalId)
 
   if (!res.success || !res.data) {
     notFound()

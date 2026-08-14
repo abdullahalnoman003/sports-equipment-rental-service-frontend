@@ -9,7 +9,7 @@ import { fetchMyRentals } from "../../_actions/orders"
 import { fetchPaymentHistory } from "../../_actions/payments"
 import type { Rental, Payment } from "@/lib/types"
 
-export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "My Dashboard",
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 
 export default async function CustomerDashboard() {
   const [rentalsRes, paymentsRes] = await Promise.all([
-    fetchMyRentals({ next: { revalidate: 30 } }),
-    fetchPaymentHistory({ next: { revalidate: 30 } }),
+    fetchMyRentals(),
+    fetchPaymentHistory(),
   ])
 
   const rentals = rentalsRes.success ? (rentalsRes.data as Rental[]) : []

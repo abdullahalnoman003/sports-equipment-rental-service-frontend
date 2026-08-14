@@ -4,7 +4,7 @@ import { fetchProviderOrders } from "../../../_actions/gear"
 import { ProviderOrdersClient } from "../../../_components/provider-orders-client"
 import type { RentalWithPayment } from "@/lib/types"
 
-export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Incoming Orders",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ProviderOrdersPage() {
-  const res = await fetchProviderOrders({ next: { revalidate: 30 } })
+  const res = await fetchProviderOrders()
   const orders = (res.success ? (res.data as RentalWithPayment[]) : []).sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   )

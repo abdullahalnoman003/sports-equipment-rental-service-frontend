@@ -10,7 +10,7 @@ import { fetchProviderGear, fetchProviderOrders } from "../../_actions/gear"
 import { getMe } from "@/service/getMe"
 import type { Gear, RentalWithPayment } from "@/lib/types"
 
-export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Provider Dashboard",
@@ -22,8 +22,8 @@ export default async function ProviderDashboard() {
   const userEmail = userRes.success ? (userRes.data as { email: string }).email : ""
 
   const [gearRes, ordersRes] = await Promise.all([
-    fetchProviderGear({ next: { revalidate: 30 } }),
-    fetchProviderOrders({ next: { revalidate: 30 } }),
+    fetchProviderGear(),
+    fetchProviderOrders(),
   ])
 
   const allGear = gearRes.success ? (gearRes.data as Gear[]) : []

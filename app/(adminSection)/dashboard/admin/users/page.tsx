@@ -4,7 +4,7 @@ import { fetchAllUsers } from "../../../_actions/users"
 import { AdminUsersClient } from "../../../_components/admin-users-client"
 import type { User } from "@/lib/types"
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "User Management",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function AdminUsersPage() {
-  const res = await fetchAllUsers({ next: { revalidate: 60 } })
+  const res = await fetchAllUsers()
   const users = res.success ? (res.data as User[]) : []
 
   return (

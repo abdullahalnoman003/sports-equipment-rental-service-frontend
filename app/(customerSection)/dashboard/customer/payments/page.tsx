@@ -4,7 +4,7 @@ import { PaymentsTable } from "../../../_components/payments-table"
 import { fetchPaymentHistory } from "../../../_actions/payments"
 import type { Payment } from "@/lib/types"
 
-export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Payment History",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function CustomerPaymentsPage() {
-  const res = await fetchPaymentHistory({ next: { revalidate: 30 } })
+  const res = await fetchPaymentHistory()
   const payments = res.success ? (res.data as Payment[]) : []
 
   return (

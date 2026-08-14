@@ -5,7 +5,7 @@ import { RentalsTable } from "../../../_components/rentals-table"
 import { fetchAllRentals } from "../../../_actions/rentals"
 import type { Rental } from "@/lib/types"
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "All Rentals",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function AdminRentalsPage() {
-  const res = await fetchAllRentals({ next: { revalidate: 60 } })
+  const res = await fetchAllRentals()
   const rentals = (res.success ? (res.data as Rental[]) : []).sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   )

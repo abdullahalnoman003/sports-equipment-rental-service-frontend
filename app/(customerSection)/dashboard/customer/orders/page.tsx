@@ -4,7 +4,7 @@ import { fetchMyRentals } from "../../../_actions/orders"
 import { CustomerOrdersClient } from "../../../_components/customer-orders-client"
 import type { Rental } from "@/lib/types"
 
-export const revalidate = 30
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "My Rentals",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function CustomerOrdersPage() {
-  const res = await fetchMyRentals({ next: { revalidate: 30 } })
+  const res = await fetchMyRentals()
   const orders = (res.success ? (res.data as Rental[]) : []).sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   )
