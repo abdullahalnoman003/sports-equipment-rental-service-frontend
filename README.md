@@ -309,3 +309,10 @@ Please ensure `pnpm lint` passes before submitting.
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## 🧑‍💻 Developer
+
+**👨‍🎓 Abdullah Al Noman**  
+🔗 [LinkedIn](https://www.linkedin.com/in/abdullahalnoman003) •  
+🔗 [Github](https://github.com/abdullahalnoman003) •  
+
