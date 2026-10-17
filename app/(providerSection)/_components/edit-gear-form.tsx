@@ -189,7 +189,7 @@ export function EditGearForm({ gear, onSuccess, onCancel }: EditGearFormProps) {
         </div>
         <p className="text-xs text-muted-foreground">
           Paste direct links to your gear photos (JPG, PNG, or WebP). Separate multiple
-          photos with commas — the first becomes the cover image and the rest form the
+          photos with commas. The first becomes the cover image and the rest form the
           gallery.
         </p>
       </div>

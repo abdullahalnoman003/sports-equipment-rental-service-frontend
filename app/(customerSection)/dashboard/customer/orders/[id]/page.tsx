@@ -21,7 +21,7 @@ export async function generateMetadata({
   }
   const order = res.data as Rental
   return {
-    title: `Order — ${order.gear.name}`,
+    title: `Order ${order.gear.name}`,
     description: `Details for your ${order.gear.name} rental order on GearUp.`,
   }
 }
