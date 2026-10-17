@@ -6,6 +6,7 @@ import { Services } from "@/components/home/services"
 import { FeaturedGear } from "@/components/home/featured-gear"
 import { HowItWorks } from "@/components/home/how-it-works"
 import { TrendingGear } from "@/components/home/trending-gear"
+import { RecommendedGear } from "@/components/ai/recommended-gear"
 import { ProviderSpotlight } from "@/components/home/provider-spotlight"
 import { BlogHighlights } from "@/components/home/blog-highlights"
 import { Newsletter } from "@/components/home/newsletter"
@@ -30,6 +31,8 @@ export default function HomePage() {
       <FeaturedGear />
       <HowItWorks />
       <TrendingGear />
+      {/* Section 9: personalised recommendations, ranked from real rental history. */}
+      <RecommendedGear />
       <ProviderSpotlight />
       <BlogHighlights />
       <Newsletter />

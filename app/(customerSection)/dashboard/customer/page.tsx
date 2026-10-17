@@ -4,9 +4,12 @@ import type { Metadata } from "next"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { StatsCards } from "@/components/shared/stats-cards"
 import { StatusBadge } from "@/components/shared/status-badge"
+import { ChartFrame, LineChart, PieChart } from "@/components/shared/charts/chart-kit"
 import { RecentRentals } from "../../_components/recent-rentals"
+import { RecommendedGearPanel } from "@/components/ai/recommended-gear"
 import { fetchMyRentals } from "../../_actions/orders"
 import { fetchPaymentHistory } from "../../_actions/payments"
+import { fetchCustomerSpending } from "../../_actions/analytics"
 import type { Rental, Payment } from "@/lib/types"
 
 export const dynamic = "force-dynamic"
@@ -47,6 +50,9 @@ export default async function CustomerDashboard() {
   }))
 
   const recentPayments = payments.slice(0, 5)
+  const spending = await fetchCustomerSpending()
+
+  const money = (value: number) => `৳${Math.round(value).toLocaleString("en-US")}`
 
   return (
     <DashboardLayout role="CUSTOMER">
@@ -72,6 +78,29 @@ export default async function CustomerDashboard() {
         </div>
 
         <StatsCards stats={stats} />
+
+        {/* Section 9: personalised recommendations from this customer's history. */}
+        <RecommendedGearPanel />
+
+        {spending && (
+          <div className="grid gap-6 xl:grid-cols-2">
+            <ChartFrame
+              title="Spending over time"
+              description="Your monthly rental spend, cancelled orders excluded"
+              empty={spending.spendSeries.every((p) => p.value === 0)}
+            >
+              <LineChart data={spending.spendSeries} format={money} />
+            </ChartFrame>
+
+            <ChartFrame
+              title="Spend by category"
+              description="Where your rental budget goes"
+              empty={spending.categorySpend.length === 0}
+            >
+              <PieChart data={spending.categorySpend} totalLabel="Spend" format={money} />
+            </ChartFrame>
+          </div>
+        )}
 
         <div className="grid gap-6 lg:grid-cols-2">
           <RecentRentals rentals={recentRentals} />

@@ -4,9 +4,11 @@ import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { StatsCards } from "@/components/shared/stats-cards"
+import { BarChart, ChartFrame, LineChart } from "@/components/shared/charts/chart-kit"
 import { GearList } from "../../_components/gear-list"
 import { OrdersList } from "../../_components/orders-list"
 import { fetchProviderGear, fetchProviderOrders } from "../../_actions/gear"
+import { fetchProviderEarnings } from "../../_actions/analytics"
 import { getMe } from "@/service/getMe"
 import type { Gear, RentalWithPayment } from "@/lib/types"
 
@@ -47,6 +49,10 @@ export default async function ProviderDashboard() {
     total: o.total_price,
   }))
 
+  const earnings = await fetchProviderEarnings()
+
+  const money = (value: number) => `৳${Math.round(value).toLocaleString("en-US")}`
+
   return (
     <DashboardLayout role="PROVIDER">
       <div className="space-y-6">
@@ -70,6 +76,26 @@ export default async function ProviderDashboard() {
           </Button>
         </div>
         <StatsCards stats={stats} />
+        {earnings && (
+          <div className="grid gap-6 xl:grid-cols-2">
+            <ChartFrame
+              title="Earnings over time"
+              description="Monthly earnings across the last 6 months"
+              empty={earnings.earningsSeries.every((p) => p.value === 0)}
+            >
+              <LineChart data={earnings.earningsSeries} format={money} />
+            </ChartFrame>
+
+            <ChartFrame
+              title="Best performing gear"
+              description="Listings ranked by earnings"
+              empty={earnings.topGear.length === 0}
+            >
+              <BarChart data={earnings.topGear} format={money} />
+            </ChartFrame>
+          </div>
+        )}
+
         <div className="grid gap-6 lg:grid-cols-2">
           <GearList gear={recentGear} />
           <OrdersList orders={recentOrders} />

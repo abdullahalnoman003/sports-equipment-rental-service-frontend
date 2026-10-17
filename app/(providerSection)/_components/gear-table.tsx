@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Package, Search, MoreHorizontal, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,6 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import { useSort } from "@/components/shared/use-table-sort"
+import { SortableHead } from "@/components/shared/sortable-head"
 import type { Gear } from "@/lib/types"
 
 const ITEMS_PER_PAGE = 10
@@ -38,9 +40,28 @@ export function GearTable({ gear, onEdit, onDelete }: GearTableProps) {
       g.name.toLowerCase().includes(search.toLowerCase()) ||
       g.brand.toLowerCase().includes(search.toLowerCase()),
   )
+  const accessors = useMemo(
+    () => ({
+      gear: (g: Gear) => g.name ?? "",
+      category: (g: Gear) => g.category_Name ?? "",
+      price: (g: Gear) => Number(g.price) || 0,
+      quantity: (g: Gear) => Number(g.quantity) || 0,
+    }),
+    []
+  )
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
-  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+  const { sorted, sort, toggleSort } = useSort(filtered, accessors)
+
+  // Sorting resets to the first page so the user never lands on an empty one.
+  const sortProps = {
+    activeColumn: sort.column,
+    direction: sort.direction,
+    onToggle: (column: string) => setPage(toggleSort(column)),
+  }
+
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE)
+  const paged = sorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
 
   const handleSearchChange = (value: string) => {
     setSearch(value)
@@ -65,10 +86,10 @@ export function GearTable({ gear, onEdit, onDelete }: GearTableProps) {
         <Table className="min-w-[500px]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>Gear</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Price/Day</TableHead>
-              <TableHead>Quantity</TableHead>
+              <SortableHead label="Gear" column="gear" {...sortProps} />
+              <SortableHead label="Category" column="category" {...sortProps} />
+              <SortableHead label="Price/Day" column="price" {...sortProps} />
+              <SortableHead label="Quantity" column="quantity" {...sortProps} />
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>

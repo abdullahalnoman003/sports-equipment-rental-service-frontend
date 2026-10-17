@@ -26,25 +26,39 @@ const ITEMS_PER_PAGE = 12
 interface GearClientProps {
   gear: Gear[]
   categories: string[]
+  brands: string[]
+  /** Average rating per gear id, from the public reviews endpoint. */
+  ratings: Record<string, number>
   initialCategory?: string
   initialMinPrice?: number
   initialMaxPrice?: number
+  initialBrand?: string
+  initialInStock?: boolean
+  initialMinRating?: number
 }
 
 export function GearClient({
   gear,
   categories,
+  brands,
+  ratings,
   initialCategory,
   initialMinPrice,
   initialMaxPrice,
+  initialBrand,
+  initialInStock,
+  initialMinRating,
 }: GearClientProps) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [search, setSearch] = useState("")
+  const [brand, setBrand] = useState(initialBrand ?? "all")
+  const [inStockOnly, setInStockOnly] = useState(initialInStock ?? false)
+  const [minRating, setMinRating] = useState(initialMinRating ?? 0)
   const [category, setCategory] = useState(
     initialCategory && initialCategory !== "All" ? initialCategory : "All"
   )
-  const [sortBy, setSortBy] = useState<"name" | "price-low" | "price-high">("name")
+  const [sortBy, setSortBy] = useState<"name" | "price-low" | "price-high" | "rating">("name")
   const [page, setPage] = useState(1)
   const [prevCategory, setPrevCategory] = useState(initialCategory)
 
@@ -63,9 +77,15 @@ export function GearClient({
         g.name.toLowerCase().includes(search.toLowerCase()) ||
         g.brand.toLowerCase().includes(search.toLowerCase())
     )
+    .filter((g) => brand === "all" || g.brand === brand)
+    .filter((g) => !inStockOnly || g.quantity > 0)
+    .filter((g) => minRating === 0 || (ratings[g.id] ?? 0) >= minRating)
     .sort((a, b) => {
       if (sortBy === "price-low") return a.price - b.price
       if (sortBy === "price-high") return b.price - a.price
+      if (sortBy === "rating") {
+        return (ratings[b.id] ?? 0) - (ratings[a.id] ?? 0) || a.name.localeCompare(b.name)
+      }
       return a.name.localeCompare(b.name)
     })
 
@@ -75,9 +95,20 @@ export function GearClient({
   // 12 items divides evenly by 2 / 3 / 4, so the row is always full.
   const cols = colsClass(4)
 
+  // The rating filter is only offered once at least one gear item actually has
+// reviews, so it can never be a control that filters everything away.
+const hasRatings = Object.keys(ratings).length > 0
+
   const inStockCount = filtered.filter((g) => g.quantity > 0).length
 
-  function pushFilters(next?: { category?: string; minPrice?: number | null; maxPrice?: number | null }) {
+  function pushFilters(next?: {
+    category?: string
+    minPrice?: number | null
+    maxPrice?: number | null
+    brand?: string
+    inStock?: boolean
+    minRating?: number
+  }) {
     const params = new URLSearchParams(window.location.search)
     if (next?.category !== undefined) {
       if (next.category === "All") params.delete("category")
@@ -90,6 +121,18 @@ export function GearClient({
     if (next?.maxPrice !== undefined) {
       if (next.maxPrice === null || next.maxPrice <= 0) params.delete("maximumPrice")
       else params.set("maximumPrice", String(next.maxPrice))
+    }
+    if (next?.brand !== undefined) {
+      if (next.brand === "all") params.delete("brand")
+      else params.set("brand", next.brand)
+    }
+    if (next?.inStock !== undefined) {
+      if (!next.inStock) params.delete("inStock")
+      else params.set("inStock", "1")
+    }
+    if (next?.minRating !== undefined) {
+      if (!next.minRating) params.delete("minRating")
+      else params.set("minRating", String(next.minRating))
     }
     const qs = params.toString()
     startTransition(() => {
@@ -108,9 +151,46 @@ export function GearClient({
     pushFilters({ category: value })
   }
 
-  function handleSortChange(value: "name" | "price-low" | "price-high") {
+  function handleBrandChange(value: string) {
+    setBrand(value)
+    setPage(1)
+    pushFilters({ brand: value })
+  }
+
+  function handleInStockChange(value: boolean) {
+    setInStockOnly(value)
+    setPage(1)
+    pushFilters({ inStock: value })
+  }
+
+  function handleMinRatingChange(value: number) {
+    setMinRating(value)
+    setPage(1)
+    pushFilters({ minRating: value })
+  }
+
+  function handleSortChange(value: "name" | "price-low" | "price-high" | "rating") {
     setSortBy(value)
     setPage(1)
+  }
+
+  function clearAllFilters() {
+    setSearch("")
+    setCategory("All")
+    setBrand("all")
+    setInStockOnly(false)
+    setMinRating(0)
+    setPage(1)
+    const params = new URLSearchParams()
+    pushFilters({
+      category: "All",
+      brand: "all",
+      inStock: false,
+      minRating: 0,
+      minPrice: null,
+      maxPrice: null,
+    })
+    if (params.toString()) router.replace("/gear", { scroll: false })
   }
 
   function handlePriceChange(minPrice?: number, maxPrice?: number) {
@@ -170,6 +250,15 @@ export function GearClient({
         sortBy={sortBy}
         onSortChange={handleSortChange}
         categories={allCategories}
+        brands={brands}
+        brand={brand}
+        onBrandChange={handleBrandChange}
+        inStockOnly={inStockOnly}
+        onInStockChange={handleInStockChange}
+        minRating={minRating}
+        onMinRatingChange={handleMinRatingChange}
+        hasRatings={hasRatings}
+        onClearAll={clearAllFilters}
         resultCount={filtered.length}
         minPrice={initialMinPrice}
         maxPrice={initialMaxPrice}

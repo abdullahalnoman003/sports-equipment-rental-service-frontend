@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Package, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 import {
   Table,
@@ -20,6 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { StatusBadge } from "@/components/shared/status-badge"
+import { useSort } from "@/components/shared/use-table-sort"
+import { SortableHead } from "@/components/shared/sortable-head"
 import type { Rental } from "@/lib/types"
 
 const ITEMS_PER_PAGE = 10
@@ -51,10 +53,29 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
   const filtered = orders
     .filter((o) => filter === "ALL" || o.status === filter)
     .filter((o) => o.gear.name.toLowerCase().includes(search.toLowerCase()))
+  const accessors = useMemo(
+    () => ({
+      gear: (o: Rental) => o.gear?.name ?? "",
+      dates: (o: Rental) => o.start_date ?? "",
+      status: (o: Rental) => o.status ?? "",
+      total: (o: Rental) => Number(o.total_price) || 0,
+    }),
+    []
+  )
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
+  const { sorted, sort, toggleSort } = useSort(filtered, accessors)
+
+  // Sorting resets to the first page so the user never lands on an empty one.
+  const sortProps = {
+    activeColumn: sort.column,
+    direction: sort.direction,
+    onToggle: (column: string) => setPage(toggleSort(column)),
+  }
+
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / ITEMS_PER_PAGE))
   const currentPage = Math.min(page, totalPages)
-  const paged = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+  const paged = sorted.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   const handleSearchChange = (value: string) => {
     setSearch(value)
@@ -99,10 +120,10 @@ export function OrdersTable({ orders, onPay, onReview }: OrdersTableProps) {
         <Table className="min-w-150">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>Gear</TableHead>
+              <SortableHead label="Gear" column="gear" {...sortProps} />
               <TableHead>Dates</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Total</TableHead>
+              <SortableHead label="Status" column="status" {...sortProps} />
+              <SortableHead label="Total" column="total" align="right" {...sortProps} />
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>

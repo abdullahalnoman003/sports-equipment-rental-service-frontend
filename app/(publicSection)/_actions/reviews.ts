@@ -39,6 +39,34 @@ export async function fetchGearReviewSummary(
 }
 
 /**
+ * Average rating for every gear item, keyed by gear id.
+ *
+ * Used by the listing page so the rating filter is one request instead of one
+ * per gear. Resolves to an empty map when the endpoint is unavailable, which
+ * simply hides any rating data rather than inventing it.
+ */
+export async function fetchRatingSummary(): Promise<Record<string, number>> {
+  try {
+    const res = await api<{ gear_id: string; average: number }[]>(
+      "/api/review/summary",
+      { next: { revalidate: 120 } }
+    )
+    if (!res.success || !Array.isArray(res.data)) return {}
+
+    const map: Record<string, number> = {}
+    for (const row of res.data) {
+      const average = Number(row?.average)
+      if (row?.gear_id && Number.isFinite(average) && average > 0) {
+        map[row.gear_id] = average
+      }
+    }
+    return map
+  } catch {
+    return {}
+  }
+}
+
+/**
  * Similar gear: same category first, then the same brand as a fallback.
  * The item itself is always excluded.
  */

@@ -20,7 +20,6 @@ import {
   Clock3,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Section } from "@/components/shared/section"
 import { fetchGearById } from "../../_actions/gear"
 import { fetchGearReviews, fetchRelatedGear } from "../../_actions/reviews"
 import { summariseReviews } from "@/lib/reviews"

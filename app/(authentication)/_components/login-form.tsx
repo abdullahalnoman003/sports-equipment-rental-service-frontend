@@ -7,7 +7,9 @@ import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { loginAction } from "../_actions/auth"
+import { loginAction, googleLoginAction } from "../_actions/auth"
+import { DemoLoginButtons } from "./demo-login-buttons"
+import { GoogleSignInButton } from "./google-sign-in-button"
 import toast from "react-hot-toast"
 import { z } from "zod"
 import { cn } from "@/lib/utils"
@@ -154,6 +156,18 @@ export function LoginForm() {
           "Sign in"
         )}
       </Button>
+
+      <GoogleSignInButton
+        onError={(message) => toast.error(message)}
+        onCredential={async (credential) => {
+          const result = await googleLoginAction(credential, redirectTo)
+          if (!result.success) {
+            toast.error(result.message)
+          }
+        }}
+      />
+
+      <DemoLoginButtons redirectTo={redirectTo} />
     </form>
   )
 }

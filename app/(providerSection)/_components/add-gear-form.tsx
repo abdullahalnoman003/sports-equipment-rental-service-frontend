@@ -74,7 +74,6 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState<GearForm>(INITIAL_FORM)
   const [categories, setCategories] = useState<string[]>([])
-  const [imageError, setImageError] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const previewImages = useMemo(
     () => normaliseGearImages({ image: form.image }).slice(0, 4),
@@ -93,7 +92,6 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
 
   const handleChange = (field: keyof GearForm, value: string) => {
     setForm((f) => ({ ...f, [field]: value }))
-    if (field === "image") setImageError(false)
     setErrors((prev) => {
       const next = { ...prev }
       delete next[field]
@@ -176,7 +174,6 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
                     fill
                     sizes="80px"
                     className="object-cover"
-                    onError={() => setImageError(true)}
                   />
                 </div>
               ))

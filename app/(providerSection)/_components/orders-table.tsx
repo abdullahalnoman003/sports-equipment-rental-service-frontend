@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Package, ChevronLeft, ChevronRight } from "lucide-react"
 import { StatusBadge } from "@/components/shared/status-badge"
+import { useSort } from "@/components/shared/use-table-sort"
+import { SortableHead } from "@/components/shared/sortable-head"
+import type { Rental, RentalWithPayment } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -19,7 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import type { RentalWithPayment } from "@/lib/types"
 
 const ALL_STATUSES = [
   { value: "PLACED", label: "Placed" },
@@ -45,9 +47,29 @@ export function OrdersTable({ orders: initialOrders, onStatusUpdate }: OrdersTab
   const [page, setPage] = useState(1)
 
   const filtered = orders.filter((o) => filter === "ALL" || o.status === filter)
+  const accessors = useMemo(
+    () => ({
+      customer: (o: Rental) => o.user?.name ?? "",
+      gear: (o: Rental) => o.gear?.name ?? "",
+      dates: (o: Rental) => o.start_date ?? "",
+      status: (o: Rental) => o.status ?? "",
+      total: (o: Rental) => Number(o.total_price) || 0,
+    }),
+    []
+  )
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
-  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+  const { sorted, sort, toggleSort } = useSort(filtered, accessors)
+
+  // Sorting resets to the first page so the user never lands on an empty one.
+  const sortProps = {
+    activeColumn: sort.column,
+    direction: sort.direction,
+    onToggle: (column: string) => setPage(toggleSort(column)),
+  }
+
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE)
+  const paged = sorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
 
   const handleFilterChange = (value: string) => {
     setFilter(value)
@@ -93,11 +115,11 @@ export function OrdersTable({ orders: initialOrders, onStatusUpdate }: OrdersTab
         <Table className="min-w-[600px]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>Customer</TableHead>
-              <TableHead>Gear</TableHead>
+              <SortableHead label="Customer" column="customer" {...sortProps} />
+              <SortableHead label="Gear" column="gear" {...sortProps} />
               <TableHead className="hidden sm:table-cell">Dates</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Total</TableHead>
+              <SortableHead label="Status" column="status" {...sortProps} />
+              <SortableHead label="Total" column="total" align="right" {...sortProps} />
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
