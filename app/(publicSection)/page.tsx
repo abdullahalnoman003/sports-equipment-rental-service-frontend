@@ -15,7 +15,7 @@ import { pageMetadata } from "@/lib/seo"
 
 export const metadata = pageMetadata(
   "Rent Sports & Outdoor Gear in Bangladesh",
-  "Rent sports and outdoor equipment by the day across Bangladesh. From bicycles and camping tents to cricket bats — book securely with GearUp and pay with Stripe.",
+  "Rent sports and outdoor equipment by the day across Bangladesh. From bicycles and camping tents to cricket bats. Book securely with GearUp and pay with Stripe.",
   "/"
 )
 

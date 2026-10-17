@@ -14,7 +14,7 @@ export default function PaymentSuccessPage() {
     <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-20">
       {/* Background accents */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -right-40 -top-40 size-125 rounded-full bg-emerald-500/10 blur-3xl" />
+        <div className="absolute -right-40 -top-40 size-125 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 size-125 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute inset-0 bg-dots-faint [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_50%,transparent_100%)]" />
       </div>
@@ -22,20 +22,20 @@ export default function PaymentSuccessPage() {
       <div className="relative w-full max-w-lg">
         <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-2xl shadow-primary/10">
           {/* Top accent */}
-          <div className="h-2 bg-gradient-to-r from-emerald-500 via-primary to-emerald-500" />
+          <div className="h-2 bg-gradient-to-r from-primary via-gold to-primary" />
 
           <div className="p-8 text-center sm:p-12">
             {/* Animated checkmark */}
             <div className="relative mx-auto flex size-24 items-center justify-center">
-              <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-pulse-soft" />
-              <div className="absolute -inset-3 rounded-full border-2 border-dashed border-emerald-500/40 animate-spin-slow" />
-              <div className="relative flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-xl shadow-emerald-500/30">
+              <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse-soft" />
+              <div className="absolute -inset-3 rounded-full border-2 border-dashed border-primary/40 animate-spin-slow" />
+              <div className="relative flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-xl shadow-primary/30">
                 <Check className="size-10" strokeWidth={3} />
               </div>
             </div>
 
-            <span className="mt-8 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-emerald-700">
-              <span className="size-1.5 rounded-full bg-emerald-500" />
+            <span className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
+              <span className="size-1.5 rounded-full bg-primary" />
               Payment Successful
             </span>
 

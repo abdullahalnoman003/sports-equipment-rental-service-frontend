@@ -20,10 +20,16 @@ import {
   Clock3,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Section } from "@/components/shared/section"
 import { fetchGearById } from "../../_actions/gear"
-import { GearDetailClient } from "../../_components/gear/gear-detail-client"
+import { fetchGearReviews, fetchRelatedGear } from "../../_actions/reviews"
+import { summariseReviews } from "@/lib/reviews"
+import { GearGallery } from "../../_components/gear/gear-gallery"
+import { GearSpecs } from "../../_components/gear/gear-specs"
+import { GearReviews } from "../../_components/gear/gear-reviews"
+import { RelatedGear } from "../../_components/gear/related-gear"
 import { RentForm } from "../../_components/gear/rent-form"
-import type { Gear } from "@/lib/types"
+import type { Gear, GearReview } from "@/lib/types"
 
 export const revalidate = 60
 
@@ -40,7 +46,7 @@ export async function generateMetadata({
   const gear = res.data as Gear
   return {
     title: gear.name,
-    description: `Rent ${gear.name} by ${gear.brand} — ৳${gear.price}/day. ${gear.description?.slice(0, 150) ?? ""} Book securely on GearUp.`,
+    description: `Rent ${gear.name} by ${gear.brand}, ৳${gear.price}/day. ${gear.description?.slice(0, 150) ?? ""} Book securely on GearUp.`,
     alternates: { canonical: `/gear/${gear.id}` },
     openGraph: {
       title: `${gear.name} | GearUp`,
@@ -60,6 +66,16 @@ export default async function GearDetailPage({ params }: { params: Promise<{ id:
 
   const gear = res.data as Gear
   const inStock = gear.quantity > 0
+
+  // Reviews and related items are independent of the gear fetch, so a slow or
+  // missing reviews endpoint can never block the page from rendering.
+  const [reviewsRes, relatedItems] = await Promise.all([
+    fetchGearReviews(gear.id, { next: { revalidate: 60 } }),
+    fetchRelatedGear(gear, 4, { next: { revalidate: 300 } }),
+  ])
+
+  const reviews = reviewsRes.success ? ((reviewsRes.data as GearReview[]) ?? []) : []
+  const reviewSummary = summariseReviews(reviews)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
@@ -89,7 +105,7 @@ export default async function GearDetailPage({ params }: { params: Promise<{ id:
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
         {/* Image gallery */}
         <div className="lg:sticky lg:top-24 lg:self-start">
-          <GearDetailClient gear={gear} />
+          <GearGallery gear={gear} />
 
           {/* Trust strip under image */}
           <div className="mt-4 grid grid-cols-3 gap-3">
@@ -120,16 +136,22 @@ export default async function GearDetailPage({ params }: { params: Promise<{ id:
             </span>
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-medium ${
-                inStock ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
+                inStock ? "bg-primary/10 text-primary" : "bg-destructive/10 text-destructive"
               }`}
             >
               {inStock ? <CheckCircle2 className="size-3.5" /> : <Package className="size-3.5" />}
               {inStock ? `${gear.quantity} available` : "Out of stock"}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/15 px-3.5 py-1 text-xs font-medium text-gold">
-              <Star className="size-3.5 fill-gold" />
-              Top rated
-            </span>
+            {/* Rating is only shown once a real review exists. */}
+            {reviewSummary.total > 0 && (
+              <a
+                href="#reviews"
+                className="inline-flex items-center gap-1.5 rounded-full bg-gold/15 px-3.5 py-1 text-xs font-medium text-gold-deep"
+              >
+                <Star className="size-3.5 fill-gold text-gold" />
+                {reviewSummary.average.toFixed(1)} ({reviewSummary.total})
+              </a>
+            )}
           </div>
 
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">
@@ -233,10 +255,15 @@ export default async function GearDetailPage({ params }: { params: Promise<{ id:
                   <MapPin className="size-3" />
                   Local provider
                 </p>
-                <span className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-primary">
-                  <Heart className="size-3 fill-primary text-primary" />
-                  4.9 rating
-                </span>
+                {reviewSummary.total > 0 && (
+                  <a
+                    href="#reviews"
+                    className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-primary"
+                  >
+                    <Heart className="size-3 fill-primary text-primary" />
+                    {reviewSummary.average.toFixed(1)} rating
+                  </a>
+                )}
               </div>
             </div>
             <Button asChild variant="outline" size="sm" className="mt-5 w-full rounded-xl">
@@ -272,8 +299,17 @@ export default async function GearDetailPage({ params }: { params: Promise<{ id:
               ))}
             </ol>
           </div>
+
+          {/* Specifications */}
+          <GearSpecs gear={gear} />
         </aside>
       </div>
+
+      {/* Reviews & ratings */}
+      <GearReviews reviews={reviews} />
+
+      {/* Related items */}
+      <RelatedGear items={relatedItems} categoryName={gear.category_Name} />
     </div>
   )
 }

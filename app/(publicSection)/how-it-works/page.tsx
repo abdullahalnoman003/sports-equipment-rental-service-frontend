@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button"
 export const metadata: Metadata = {
   title: "How It Works",
   description:
-    "Learn how GearUp works — rent sports gear in four simple steps or list your own equipment and start earning in three.",
+    "Learn how GearUp works. Rent sports gear in four simple steps or list your own equipment and start earning in three.",
   alternates: { canonical: "/how-it-works" },
 }
 
@@ -78,12 +78,12 @@ const providerSteps = [
 ]
 
 const rentalStatuses = [
-  { status: "PLACED", dot: "bg-yellow-500", badge: "bg-yellow-100 text-yellow-700", description: "Customer has requested the rental. Provider needs to confirm." },
-  { status: "CONFIRMED", dot: "bg-blue-500", badge: "bg-blue-100 text-blue-700", description: "Provider accepted. Customer can now proceed to payment." },
-  { status: "PAID", dot: "bg-purple-500", badge: "bg-purple-100 text-purple-700", description: "Payment completed. Awaiting gear pickup." },
-  { status: "PICKED_UP", dot: "bg-green-500", badge: "bg-green-100 text-green-700", description: "Customer has the gear. Rental period is active." },
-  { status: "RETURNED", dot: "bg-gray-500", badge: "bg-gray-100 text-gray-600", description: "Gear returned. Customer can leave a review." },
-  { status: "CANCELED", dot: "bg-red-500", badge: "bg-red-100 text-red-700", description: "Rental was cancelled by either party." },
+  { status: "PLACED", dot: "bg-gold", badge: "bg-gold/15 text-gold-deep", description: "Customer has requested the rental. Provider needs to confirm." },
+  { status: "CONFIRMED", dot: "bg-primary", badge: "bg-primary/10 text-primary", description: "Provider accepted. Customer can now proceed to payment." },
+  { status: "PAID", dot: "bg-gold", badge: "bg-gold/15 text-gold-deep", description: "Payment completed. Awaiting gear pickup." },
+  { status: "PICKED_UP", dot: "bg-primary", badge: "bg-primary/10 text-primary", description: "Customer has the gear. Rental period is active." },
+  { status: "RETURNED", dot: "bg-slate-accent", badge: "bg-slate-accent/10 text-slate-accent", description: "Gear returned. Customer can leave a review." },
+  { status: "CANCELED", dot: "bg-destructive", badge: "bg-destructive/10 text-destructive", description: "Rental was cancelled by either party." },
 ]
 
 export default function HowItWorksPage() {

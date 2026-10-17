@@ -12,7 +12,7 @@ export const revalidate = 300
 export async function ProviderSpotlight() {
   const providers = await fetchProviderSpotlight(4)
 
-  // Only 2 providers exist in the catalog today — shrink the grid so the row
+  // Only 2 providers exist in the catalog today. Shrink the grid so the row
   // is still completely filled instead of leaving empty cells.
   const { items: visible, cols } = fillGrid(providers, 4)
 

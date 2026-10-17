@@ -34,7 +34,7 @@ export async function Hero() {
       headline: "List your gear.",
       highlight: "Earn every weekend",
       description:
-        "Turn equipment that sits idle into monthly income. You control the price, the availability and the calendar — we handle payments, status tracking and reviews.",
+        "Turn equipment that sits idle into monthly income. You control the price, the availability and the calendar. We handle payments, status tracking and reviews.",
       image:
         "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=2000&q=80",
       alt: "Camping tent pitched beside a lake at dusk",
@@ -84,12 +84,6 @@ export async function Hero() {
   return (
     <div className="relative">
       <HeroSlider slides={slides} />
-
-      {/* Visual flow into the next section */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent"
-      />
     </div>
   )
 }

@@ -50,6 +50,9 @@ export interface Gear {
   updatedAt: string
   category_Name: string
   provider_id: string
+  /** Optional multi-image gallery. Backends may expose `images` as an array or a
+   *  comma-separated string; `normaliseGearImages` handles both. */
+  images?: string[] | string | null
 }
 
 export interface GearWithUser extends Gear {
@@ -95,6 +98,20 @@ export interface Review {
   comment: string
   created_at: string
   updated_at: string
+}
+
+/** A review enriched with the reviewer, as returned for public display. */
+export interface GearReview extends Review {
+  user?: { name?: string; email?: string; profile?: { profile_picture?: string | null } | null }
+  reviewer_name?: string
+  reviewer_image?: string | null
+}
+
+export interface ReviewSummary {
+  average: number
+  total: number
+  /** Counts keyed by star value, index 0 = 1 star … index 4 = 5 stars. */
+  distribution: number[]
 }
 
 export interface ApiResponse<T> {

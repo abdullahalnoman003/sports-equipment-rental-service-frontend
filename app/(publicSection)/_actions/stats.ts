@@ -47,7 +47,7 @@ function priceOf(gear: Gear): number {
 
 /**
  * Live platform metrics derived from the public catalog API.
- * Nothing here is hard-coded — every number comes from the backend.
+ * Nothing here is hard-coded. Every number comes from the backend.
  */
 export async function fetchPlatformStats(): Promise<PlatformStats> {
   try {
@@ -115,7 +115,7 @@ export async function fetchTrendingGear(limit = 4): Promise<Gear[]> {
 }
 
 /**
- * Real providers aggregated from live listings — replaces invented testimonials
+ * Real providers aggregated from live listings, replacing invented testimonials
  * with verifiable data (gear counts, stock and starting prices).
  */
 export async function fetchProviderSpotlight(limit = 4): Promise<ProviderSpotlight[]> {

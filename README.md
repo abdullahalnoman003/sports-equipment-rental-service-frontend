@@ -17,7 +17,7 @@
 
 ---
 
-GearUp connects equipment owners with outdoor enthusiasts, athletes, and adventure seekers through a modern rental marketplace. Providers list their gear — bicycles, camping tents, cricket bats, fitness equipment — and customers browse, book by the day, and pay securely through Stripe.
+GearUp connects equipment owners with outdoor enthusiasts, athletes, and adventure seekers through a modern rental marketplace. Providers list their gear (bicycles, camping tents, cricket bats, fitness equipment) and customers browse, book by the day, and pay securely through Stripe.
 
 Built with **Next.js 16**, **React 19 Server Components**, and **Tailwind CSS v4**, the application delivers fast initial page loads, SEO-optimized server rendering, and a responsive interface across all device sizes.
 
@@ -130,7 +130,7 @@ gearup-frontend/
 │   ├── (adminSection)/            # Admin dashboard, users, gear audit, categories
 │   ├── (authentication)/          # Login, register
 │   ├── (profileSection)/          # User profile
-│   ├── layout.tsx                 # Root layout — theme provider, fonts, toaster
+│   ├── layout.tsx                 # Root layout: theme provider, fonts, toaster
 │   ├── globals.css                # Tailwind v4 theme tokens and custom animations
 │   ├── not-found.tsx              # Custom 404 page
 │   └── loading.tsx                # Global loading skeleton
@@ -141,15 +141,15 @@ gearup-frontend/
 │   └── home/                      # Hero, features, services, testimonials, FAQ, CTA
 │
 ├── lib/
-│   ├── types.ts                   # Domain models — User, Gear, Rental, Payment, Review
+│   ├── types.ts                   # Domain models: User, Gear, Rental, Payment, Review
 │   ├── utils.ts                   # cn() class merge helper
 │   ├── get-token.ts               # Server-side cookie token reader
 │   └── seo.ts                     # OpenGraph and metadata helpers
 │
 ├── service/
 │   ├── api.ts                     # Centralized fetch client with cookie injection
-│   ├── getMe.ts                   # Server action — fetch authenticated user
-│   └── logout.ts                  # Server action — clear auth cookies
+│   ├── getMe.ts                   # Server action: fetch authenticated user
+│   └── logout.ts                  # Server action: clear auth cookies
 │
 ├── public/                        # Static assets (logos, favicons)
 ├── next.config.ts                 # Remote image pattern configuration
@@ -171,9 +171,9 @@ Next.js route groups (parenthesized folders) organize code without affecting URL
 | `(profileSection)` | `/profile` | Account settings |
 
 Each route group contains:
-- `_components/` — page-specific UI components
-- `_actions/` — server actions wrapping `service/api.ts` calls
-- `page.tsx` — thin page composing components with data
+- `_components/` : page-specific UI components
+- `_actions/` : server actions wrapping `service/api.ts` calls
+- `page.tsx` : thin page composing components with data
 
 ### Rental Order Lifecycle
 
@@ -184,7 +184,7 @@ PLACED ──► CONFIRMED ──► PAID ──► PICKED_UP ──► RETURNED
                     (Stripe webhook)
 ```
 
-After a rental reaches `RETURNED`, the customer may submit a verified review (1–5 stars).
+After a rental reaches `RETURNED`, the customer may submit a verified review (1 to 5 stars).
 
 ### Authentication Flow
 
@@ -203,7 +203,7 @@ After a rental reaches `RETURNED`, the customer may submit a verified review (1�
 | **Category** | `name`, `description`, `image` | → Gears |
 | **Rental** | `start_date`, `end_date`, `status`, `total_price` | → User, → Gear, → Payment |
 | **Payment** | `transaction_id`, `amount`, `provider`, `status` | → Rental |
-| **Review** | `rating` (1–5), `comment` | → User, → Gear |
+| **Review** | `rating` (1 to 5), `comment` | → User, → Gear |
 
 ## API Reference
 
@@ -213,22 +213,22 @@ The frontend communicates with a RESTful backend through a centralized API clien
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `POST` | `/api/auth/register` | — | Create a new customer or provider account |
-| `POST` | `/api/auth/login` | — | Authenticate and receive session cookies |
+| `POST` | `/api/auth/register` | None | Create a new customer or provider account |
+| `POST` | `/api/auth/login` | None | Authenticate and receive session cookies |
 | `GET` | `/api/auth/me` | Any | Retrieve authenticated user profile |
 
 ### Gear Catalog
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `GET` | `/api/gear` | — | List gear with optional `brand`, `category`, `minimumPrice`, `maximumPrice` filters |
-| `GET` | `/api/gear/:id` | — | Get single gear details |
+| `GET` | `/api/gear` | None | List gear with optional `brand`, `category`, `minimumPrice`, `maximumPrice` filters |
+| `GET` | `/api/gear/:id` | None | Get single gear details |
 
 ### Categories
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `GET` | `/api/category` | — | List all categories |
+| `GET` | `/api/category` | None | List all categories |
 | `POST` | `/api/category/create-category` | Admin | Create category |
 | `PUT` | `/api/category/update-category/:id` | Admin | Update category |
 | `DELETE` | `/api/category/delete-category/:id` | Admin | Delete category (fails if gear exists) |

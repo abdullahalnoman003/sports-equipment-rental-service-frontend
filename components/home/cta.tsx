@@ -17,7 +17,7 @@ export function Cta() {
             className="object-cover"
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/90 to-emerald-900/95" />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/95 via-primary/90 to-primary/60" />
 
           {/* Decorative elements */}
           <div className="pointer-events-none absolute inset-0">

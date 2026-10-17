@@ -6,7 +6,7 @@ import { ContactForm } from "../_components/contact/contact-form"
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with the GearUp team. Questions, suggestions, or support — our team responds within 24 hours.",
+    "Get in touch with the GearUp team. Questions, suggestions, or support. Our team responds within 24 hours.",
   alternates: { canonical: "/contact" },
 }
 

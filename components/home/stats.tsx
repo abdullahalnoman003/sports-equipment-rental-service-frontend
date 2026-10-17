@@ -28,7 +28,7 @@ export async function StatsStrip() {
               <stat.icon className="size-5" />
             </span>
             <p className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              {hasData && stat.value > 0 ? stat.value.toLocaleString() : "—"}
+              {hasData && stat.value > 0 ? stat.value.toLocaleString() : "0"}
             </p>
             <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {stat.label}

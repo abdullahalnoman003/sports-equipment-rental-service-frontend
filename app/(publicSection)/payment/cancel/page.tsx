@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 
 export const metadata: Metadata = {
   title: "Payment Cancelled",
-  description: "Your rental payment was cancelled. No money was charged — retry whenever you are ready.",
+  description: "Your rental payment was cancelled. No money was charged. Retry whenever you are ready.",
   robots: { index: false, follow: false },
 }
 
@@ -14,7 +14,7 @@ export default function PaymentCancelPage() {
     <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-20">
       {/* Background accents */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -right-40 -top-40 size-125 rounded-full bg-red-500/10 blur-3xl" />
+        <div className="absolute -right-40 -top-40 size-125 rounded-full bg-destructive/10 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 size-125 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute inset-0 bg-dots-faint [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_50%,transparent_100%)]" />
       </div>

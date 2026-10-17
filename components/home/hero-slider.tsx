@@ -92,7 +92,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
       aria-roledescription="carousel"
       aria-label="Featured highlights"
       tabIndex={-1}
-      className="relative isolate flex h-[60vh] min-h-[440px] max-h-[680px] w-full overflow-hidden sm:h-[64vh] lg:h-[68vh]"
+      className="relative isolate w-full overflow-hidden"
       onMouseEnter={() => setPlaying(false)}
       onMouseLeave={() => setPlaying(true)}
       onFocusCapture={() => setPlaying(false)}
@@ -125,33 +125,36 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         </div>
       ))}
 
-      {/* Readability scrim */}
+      {/* Readability scrim. The vertical fade is kept short so it never bleeds
+          under the following section. */}
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/40" />
 
-      {/* Content */}
-      <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-16 sm:px-6 lg:px-8">
+      {/* Content.
+          `min-h` (never a fixed height) so the copy can never be clipped on
+          small screens, with bottom padding reserved for the controls. */}
+      <div className="relative mx-auto flex min-h-[60vh] w-full max-w-7xl items-center px-4 pb-24 pt-12 sm:min-h-[64vh] sm:px-6 sm:pb-24 sm:pt-14 lg:min-h-[68vh] lg:px-8 lg:pb-28 lg:pt-16">
         <div className="max-w-2xl">
           <div key={`copy-${active.id}`} className="animate-fade-up">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-4 py-1.5 text-sm backdrop-blur-sm">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3.5 py-1.5 text-xs backdrop-blur-sm sm:px-4 sm:text-sm">
               <span className="size-2 animate-pulse rounded-full bg-primary" />
               <span className="text-muted-foreground">{active.eyebrow}</span>
             </span>
 
-            <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-balance sm:text-5xl lg:text-6xl">
+            <h1 className="mt-4 text-3xl font-bold leading-[1.12] tracking-tight text-balance sm:mt-5 sm:text-4xl lg:text-5xl xl:text-6xl">
               {active.headline}{" "}
               <span className="text-gradient-brand">{active.highlight}</span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:mt-5 sm:text-base lg:text-lg">
               {active.description}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col gap-3 sm:mt-7 sm:flex-row">
               <Button
                 size="lg"
                 asChild
-                className="group gap-2 px-8 text-base shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30"
+                className="group gap-2 px-7 text-base shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 sm:px-8"
               >
                 <Link href={active.primaryCta.href} tabIndex={-1}>
                   {active.primaryCta.label}
@@ -164,7 +167,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                   size="lg"
                   variant="outline"
                   asChild
-                  className="gap-2 bg-background/60 px-8 text-base backdrop-blur-sm"
+                  className="gap-2 bg-background/60 px-7 text-base backdrop-blur-sm sm:px-8"
                 >
                   <Link href={active.secondaryCta.href} tabIndex={-1}>
                     {active.secondaryCta.label}
@@ -174,8 +177,9 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
             </div>
           </div>
 
+          {/* Hidden on mobile so the hero stays within the 60 to 70 percent band. */}
           {active.badge && (
-            <div className="mt-10 inline-flex items-center gap-4 rounded-2xl border border-border bg-card/90 px-5 py-3.5 shadow-lg backdrop-blur-sm animate-fade-up [animation-delay:400ms]">
+            <div className="mt-8 hidden animate-fade-up items-center gap-4 rounded-2xl border border-border bg-card/90 px-5 py-3.5 shadow-lg backdrop-blur-sm [animation-delay:400ms] lg:inline-flex">
               <span className="text-2xl font-bold leading-none text-primary">{active.badge.value}</span>
               <span className="text-sm text-muted-foreground">{active.badge.label}</span>
             </div>
@@ -186,8 +190,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
       {/* Controls */}
       {count > 1 && (
         <>
-          <div className="absolute inset-x-4 bottom-5 mx-auto flex max-w-7xl items-center justify-between gap-4 sm:inset-x-6 lg:inset-x-8">
-            <div className="flex items-center gap-2.5">
+          <div className="absolute inset-x-4 bottom-4 z-10 mx-auto flex max-w-7xl items-center justify-between gap-3 sm:inset-x-6 sm:bottom-6 lg:inset-x-8">
+            <div className="flex min-w-0 items-center gap-2">
               {slides.map((slide, i) => (
                 <button
                   key={slide.id}
@@ -201,8 +205,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                     className={cn(
                       "block h-1 rounded-full transition-all duration-300",
                       i === index
-                        ? "w-10 bg-primary"
-                        : "w-5 bg-muted-foreground/35 group-hover/dot:bg-muted-foreground/70"
+                        ? "w-8 bg-primary sm:w-10"
+                        : "w-4 bg-muted-foreground/35 group-hover/dot:bg-muted-foreground/70 sm:w-5"
                     )}
                   />
                 </button>
@@ -212,19 +216,19 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                 type="button"
                 onClick={() => setPlaying((p) => !p)}
                 aria-label={playing ? "Pause slideshow" : "Play slideshow"}
-                className="ml-1 flex size-7 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                className="ml-1 flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-background/70 text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary/40 hover:text-primary"
               >
                 {playing ? <Pause className="size-3" /> : <Play className="size-3" />}
               </button>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               <Button
                 variant="outline"
                 size="icon"
                 onClick={prev}
                 aria-label="Previous slide"
-                className="size-10 rounded-full bg-background/70 backdrop-blur-sm"
+                className="size-9 rounded-full bg-background/80 backdrop-blur-sm sm:size-10"
               >
                 <ChevronLeft className="size-4" />
               </Button>
@@ -233,7 +237,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
                 size="icon"
                 onClick={next}
                 aria-label="Next slide"
-                className="size-10 rounded-full bg-background/70 backdrop-blur-sm"
+                className="size-9 rounded-full bg-background/80 backdrop-blur-sm sm:size-10"
               >
                 <ChevronRight className="size-4" />
               </Button>
@@ -244,7 +248,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           {playing && (
             <div
               aria-hidden="true"
-              className="absolute inset-x-0 bottom-0 h-0.5 bg-border/60"
+              className="absolute inset-x-0 bottom-0 z-10 h-0.5 bg-border/60"
             >
               <div
                 className="h-full bg-gradient-to-r from-primary to-gold motion-reduce:hidden"

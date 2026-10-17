@@ -15,6 +15,7 @@ import {
 import type { Metadata } from "next"
 import { PageHero } from "@/components/shared/page-hero"
 import { Button } from "@/components/ui/button"
+import { fetchPlatformStats } from "@/app/(publicSection)/_actions/stats"
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -50,13 +51,6 @@ const values = [
   },
 ]
 
-const stats = [
-  { value: "10,000+", label: "Active Users", icon: Users },
-  { value: "2,500+", label: "Gear Listed", icon: Globe },
-  { value: "15,000+", label: "Rentals Completed", icon: Award },
-  { value: "64", label: "Districts Covered", icon: Leaf },
-]
-
 const milestones = [
   {
     year: "2024",
@@ -70,12 +64,21 @@ const milestones = [
   },
   {
     year: "2026",
-    title: "Across Bangladesh",
-    description: "GearUp now serves all 64 districts with 2,500+ gear items listed by trusted local providers.",
+    title: "Growing the catalogue",
+    description:
+      "GearUp now lists hundreds of items across every major sports and outdoor category, added daily by local providers.",
   },
 ]
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const stats = await fetchPlatformStats()
+
+  const figures = [
+    { value: stats.gearListings.toLocaleString(), label: "Gear Listed", icon: Globe },
+    { value: stats.categories.toLocaleString(), label: "Categories", icon: Award },
+    { value: stats.providers.toLocaleString(), label: "Providers", icon: Users },
+    { value: stats.unitsAvailable.toLocaleString(), label: "Units Available", icon: Leaf },
+  ]
   return (
     <>
       <PageHero
@@ -92,7 +95,7 @@ export default function AboutPage() {
       {/* Stats */}
       <section className="relative px-4 pb-20">
         <div className="relative mx-auto grid max-w-5xl grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
-          {stats.map((stat) => (
+          {figures.map((stat) => (
             <div
               key={stat.label}
               className="group rounded-3xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 sm:p-8"
@@ -133,8 +136,10 @@ export default function AboutPage() {
                   <Quote className="size-5 fill-gold text-gold" />
                 </span>
                 <div>
-                  <p className="text-sm font-bold leading-none">15,000+</p>
-                  <p className="mt-1 text-xs text-muted-foreground">rentals completed</p>
+                  <p className="text-sm font-bold leading-none">
+                    {stats.gearListings.toLocaleString()}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">items listed</p>
                 </div>
               </div>
             </div>
@@ -160,10 +165,10 @@ export default function AboutPage() {
                 this gap.
               </p>
               <p>
-                Today, GearUp serves users in Dhaka, Chittagong, Sylhet, Rajshahi, Khulna, and
-                across all 64 districts. Whether you&apos;re a student who needs a football for
-                a campus tournament, or a family planning a Cox&apos;s Bazar camping trip,
-                GearUp has you covered.
+                Today, GearUp connects renters and providers across Dhaka, Chittagong,
+                Sylhet, Rajshahi, Khulna and beyond. Whether you&apos;re a student who needs a
+                football for a campus tournament, or a family planning a Cox&apos;s Bazar
+                camping trip, GearUp has you covered.
               </p>
             </div>
           </div>
