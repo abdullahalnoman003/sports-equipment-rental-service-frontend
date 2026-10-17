@@ -1,6 +1,7 @@
 import { Search, CalendarCheck, CreditCard, ThumbsUp } from "lucide-react"
 import Link from "next/link"
 import { SectionHeading } from "@/components/shared/page-hero"
+import { Section } from "@/components/shared/section"
 import { Button } from "@/components/ui/button"
 
 const steps = [
@@ -32,9 +33,8 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="relative px-4 py-20 sm:py-24">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeading
+    <Section tone="muted">
+      <SectionHeading
           eyebrow="How It Works"
           title={
             <>
@@ -70,12 +70,11 @@ export function HowItWorks() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-8 text-center">
           <Button size="lg" asChild className="gap-2 rounded-full px-8 shadow-lg shadow-primary/20">
             <Link href="/gear">Start Exploring Gear</Link>
           </Button>
         </div>
-      </div>
-    </section>
+    </Section>
   )
 }

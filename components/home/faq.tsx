@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { ChevronDown, MessageCircleQuestion } from "lucide-react"
 import { SectionHeading } from "@/components/shared/page-hero"
+import { Section } from "@/components/shared/section"
 import { cn } from "@/lib/utils"
 
 const faqs = [
@@ -42,9 +43,8 @@ export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <section className="relative px-4 py-20 sm:py-24" id="faq">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeading
+    <Section id="faq" tone="plain" innerClassName="max-w-3xl">
+      <SectionHeading
           eyebrow="FAQ"
           title={
             <>
@@ -110,7 +110,6 @@ export function Faq() {
             )
           })}
         </div>
-      </div>
-    </section>
+    </Section>
   )
 }

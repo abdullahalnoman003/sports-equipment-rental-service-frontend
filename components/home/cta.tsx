@@ -1,13 +1,13 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
+import { Section } from "@/components/shared/section"
 import { ArrowRight, Zap, ShieldCheck, Headset } from "lucide-react"
 
 export function Cta() {
   return (
-    <section className="relative px-4 py-20 sm:py-24" id="cta">
-      <div className="mx-auto max-w-6xl">
-        <div className="relative overflow-hidden rounded-[2.5rem] px-6 py-16 text-center sm:px-16 sm:py-20">
+    <Section id="cta" tone="muted" innerClassName="max-w-6xl" space="roomy">
+        <div className="relative overflow-hidden rounded-[2.5rem] px-6 py-14 text-center sm:px-16 sm:py-16">
           {/* Background image + overlay */}
           <Image
             src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?auto=format&fit=crop&w=1600&q=80"
@@ -62,7 +62,7 @@ export function Cta() {
               </Button>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-white/70">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-white/70">
               <span className="inline-flex items-center gap-1.5">
                 <ShieldCheck className="size-4" />
                 Secure payments
@@ -76,7 +76,6 @@ export function Cta() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
+    </Section>
   )
 }
