@@ -34,9 +34,9 @@ function passwordScore(password: string) {
 
 const strengthMeta = [
   { label: "Weak", className: "bg-destructive" },
-  { label: "Fair", className: "bg-amber-500" },
-  { label: "Good", className: "bg-yellow-400" },
-  { label: "Strong", className: "bg-emerald-500" },
+  { label: "Fair", className: "bg-gold" },
+  { label: "Good", className: "bg-gold-deep" },
+  { label: "Strong", className: "bg-primary" },
 ]
 
 export function RegisterForm() {
