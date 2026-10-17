@@ -1,8 +1,10 @@
 import "./globals.css";
 import { Lora } from "next/font/google";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/shared/theme-provider";
+import { NavigationBar } from "@/components/shared/navigation-bar";
 import { Toaster } from "react-hot-toast";
 import { siteConfig } from "@/lib/seo";
 
@@ -74,7 +76,13 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {/* Follows every client navigation, on every route. */}
+          <Suspense fallback={null}>
+            <NavigationBar />
+          </Suspense>
+          {children}
+        </ThemeProvider>
         <Toaster
           position="top-right"
           toastOptions={{

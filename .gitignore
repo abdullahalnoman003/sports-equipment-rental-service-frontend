@@ -48,3 +48,4 @@ AGENTS.md
 
 API Documentation 
 .vercel
+.env*.local

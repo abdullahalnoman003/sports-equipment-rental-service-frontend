@@ -11,7 +11,7 @@
 [![Stripe](https://img.shields.io/badge/Stripe-Payments-635BFF?logo=stripe&logoColor=white)](https://stripe.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[Features](#features) · [Getting Started](#getting-started) · [Architecture](#architecture) · [API Reference](#api-reference) · [Contributing](#contributing)
+[Features](#features) · [Demo Credentials](#demo-credentials) · [AI Features](#ai-features) · [Getting Started](#getting-started) · [Architecture](#architecture) · [API Reference](#api-reference) · [Contributing](#contributing)
 
 </div>
 
@@ -43,11 +43,34 @@ Built with **Next.js 16**, **React 19 Server Components**, and **Tailwind CSS v4
 - Platform-wide gear and rental transaction oversight
 - Category management with CRUD operations
 
+**AI Features**
+- AI search suggestions that appear as you type, backed by the live catalog
+- Personalised gear recommendations ranked from your own rental history
+- AI chat assistant that answers renting questions using real catalog data
+- Graceful degradation: every AI feature falls back to a deterministic local
+  implementation, so nothing breaks when the API is unavailable
+
 **Design & UX**
 - Dark / light / system theme switching with zero-flash hydration
 - Responsive layout optimized for desktop, tablet, and mobile
 - Custom animation system with fade-up, float, shimmer, and pulse micro-interactions
 - Lora typography from Google Fonts
+
+## Demo Credentials
+
+The login page has one-click **Customer**, **Provider** and **Admin** buttons that sign you in
+instantly. The credentials are resolved on the server, so the browser never receives them.
+
+| Role | Email | Password | What to look at |
+|---|---|---|---|
+| Customer | `noman2@gmail.com` | `thisisasecurepassword` | Rental history, spending charts, payments |
+| Provider | `noman6@gmail.com` | `thisisasecurepassword` | Listings, incoming orders, earnings |
+| Admin | `admin@gmail.com` | `admin@123` | Full oversight, analytics, user and category management |
+
+Google sign-in is also enabled, so you can sign in with any Google account instead.
+
+These accounts are pre-seeded with real data so the dashboards are worth exploring. Do not enter
+real personal information.
 
 ## Getting Started
 
@@ -294,7 +317,72 @@ All endpoints return a consistent JSON envelope:
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `NEXT_PUBLIC_API_URL` | Yes | `http://localhost:5000` | Backend REST API base URL |
-| `NEXT_PUBLIC_SITE_URL` | No | `http://localhost:3000` | Frontend URL for SEO metadata |
+| `NEXT_PUBLIC_SITE_URL` | No | `http://localhost:3000` | Frontend URL for canonical and OpenGraph metadata |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | No | none | Google Sign-In client ID. Blank hides the button |
+| `GEMINI_API_KEY` | No | none | AI provider 1. Blank skips it |
+| `GROQ_API_KEY` | No | none | AI provider 2. Blank skips it |
+| `OPENROUTER_API_KEY` | No | none | AI provider 3. Blank skips it |
+| `NVIDIA_API_KEY` | No | none | AI provider 4. Blank skips it |
+| `MISTRAL_API_KEY` | No | none | AI provider 5. Blank skips it |
+
+All five AI keys are read only in server actions, so none of them ever reach the
+browser. See [AI Features](#ai-features) for how the fallback chain works.
+
+## AI Features
+
+Three features, all optional. With no API keys the site still works, because
+every feature has a deterministic fallback built over the live catalog rather
+than a stub.
+
+| Feature | Where | What it does |
+|---|---|---|
+| Search suggestions | Browse Gear search box | Suggests completions as you type |
+| Personalised recommendations | Home page and customer dashboard | Ranked from your own rental history |
+| Chat assistant | Floating button on every public page | Answers renting questions from real catalog data |
+
+### Getting the API keys
+
+Every provider below has a free tier and no card is required. Sign up for as many
+as you like: more keys means more redundancy.
+
+| # | Provider | Env var | Get a key |
+|---|---|---|---|
+| 1 | Google Gemini | `GEMINI_API_KEY` | <https://aistudio.google.com/apikey> |
+| 2 | Groq | `GROQ_API_KEY` | <https://console.groq.com/keys> |
+| 3 | OpenRouter | `OPENROUTER_API_KEY` | <https://openrouter.ai/keys> |
+| 4 | NVIDIA NIM | `NVIDIA_API_KEY` | <https://build.nvidia.com/settings/api-keys> |
+| 5 | Mistral | `MISTRAL_API_KEY` | <https://console.mistral.ai/api-keys> |
+
+Recommended setup: add Gemini as the primary and one other, for example Groq or
+OpenRouter, as the backup. That is enough for the fallback to do its job.
+
+### How the fallback works
+
+Providers are tried **in the order listed above**. The first that answers wins.
+
+- A provider with no key set is skipped entirely, so you can add keys gradually.
+- Each provider carries several models, tried in order, so a retired model
+  degrades to the next one instead of becoming an outage.
+- A **circuit breaker** trips after two consecutive failures and skips that
+  provider for two minutes. Without it, every request would sit through a dead
+  provider's timeout before trying the next.
+- Each provider is capped at 20 calls per minute and identical prompts are cached
+  for 10 minutes, to stay inside the free tiers.
+- The chat assistant names the provider that answered, so nothing is misattributed.
+
+### Keeping answers on-brand
+
+Every prompt is prefixed with a shared site context in `lib/ai/context.ts`, so
+whichever provider ends up answering, it answers **as GearUp**:
+
+- Always calls the platform GearUp, never a generic marketplace.
+- Prices in BDT using ৳, matching the rest of the site.
+- Grounded in real policies: daily-rate pricing, Stripe payment, the
+  PLACED to RETURNED order stages, and the three account roles.
+- Only catalog items may be recommended. Anything else is filtered out before it
+  can render.
+- No em dashes or en dashes, matching the site-wide rule. Output is cleaned again
+  on the way out, because models write them regardless of the instruction.
 
 ## Contributing
 
