@@ -31,6 +31,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Browse Gear", href: "/gear" },
   { label: "How It Works", href: "/how-it-works" },
+  { label: "Blog", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ]

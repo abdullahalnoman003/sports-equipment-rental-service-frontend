@@ -22,6 +22,7 @@ const linkColumns: { title: string; links: LinkItem[] }[] = [
     links: [
       { label: "Browse Gear", href: "/gear" },
       { label: "How It Works", href: "/how-it-works" },
+      { label: "Blog", href: "/blog" },
       { label: "Help Center", href: "/help" },
       { label: "About Us", href: "/about" },
     ],
