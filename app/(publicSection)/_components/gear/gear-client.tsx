@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
@@ -15,11 +15,13 @@ import {
 } from "lucide-react"
 import { GearFilters } from "./gear-filters"
 import { GearCard } from "./gear-card"
+import { GearCardSkeleton } from "./gear-card-skeleton"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { colsClass } from "@/lib/grid"
 import type { Gear } from "@/lib/types"
 
-const ITEMS_PER_PAGE = 9
+const ITEMS_PER_PAGE = 12
 
 interface GearClientProps {
   gear: Gear[]
@@ -37,6 +39,7 @@ export function GearClient({
   initialMaxPrice,
 }: GearClientProps) {
   const router = useRouter()
+  const [pending, startTransition] = useTransition()
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState(
     initialCategory && initialCategory !== "All" ? initialCategory : "All"
@@ -69,6 +72,8 @@ export function GearClient({
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
   const safePage = Math.min(page, totalPages)
   const paged = filtered.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE)
+  // 12 items divides evenly by 2 / 3 / 4, so the row is always full.
+  const cols = colsClass(4)
 
   const inStockCount = filtered.filter((g) => g.quantity > 0).length
 
@@ -87,7 +92,9 @@ export function GearClient({
       else params.set("maximumPrice", String(next.maxPrice))
     }
     const qs = params.toString()
-    router.replace(qs ? `/gear?${qs}` : "/gear", { scroll: false })
+    startTransition(() => {
+      router.replace(qs ? `/gear?${qs}` : "/gear", { scroll: false })
+    })
   }
 
   function handleSearchChange(value: string) {
@@ -196,10 +203,19 @@ export function GearClient({
         </div>
       ) : (
         <>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {paged.map((item) => (
-              <GearCard key={item.id} gear={item} />
-            ))}
+          <div
+            className={cn(
+              "grid gap-5 transition-opacity duration-200",
+              cols,
+              pending && "opacity-40 pointer-events-none"
+            )}
+            aria-busy={pending}
+          >
+            {pending
+              ? Array.from({ length: ITEMS_PER_PAGE }, (_, i) => (
+                  <GearCardSkeleton key={`skeleton-${i}`} />
+                ))
+              : paged.map((item) => <GearCard key={item.id} gear={item} />)}
           </div>
 
           {totalPages > 1 && (

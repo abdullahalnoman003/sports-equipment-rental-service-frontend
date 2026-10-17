@@ -26,7 +26,7 @@ export function ContactForm({ onSuccess }: ContactFormProps) {
   return (
     <>
       {sent && (
-        <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+        <div className="rounded-lg border border-primary/25 bg-primary/5 px-4 py-3 text-sm text-primary">
           Message sent successfully! We&apos;ll get back to you soon.
         </div>
       )}

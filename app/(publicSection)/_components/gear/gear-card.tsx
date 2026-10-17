@@ -29,7 +29,7 @@ export function GearCard({ gear }: GearCardProps) {
             src={gear.image!}
             alt={gear.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             onError={() => setImgError(true)}
           />
@@ -46,10 +46,10 @@ export function GearCard({ gear }: GearCardProps) {
           <Badge
             className={cn(
               "gap-1.5 border-none text-xs shadow-sm backdrop-blur-sm",
-              inStock ? "bg-white/90 text-emerald-700" : "bg-white/90 text-red-600"
+              inStock ? "bg-white/90 text-primary" : "bg-white/90 text-destructive"
             )}
           >
-            <span className={cn("size-1.5 rounded-full", inStock ? "bg-emerald-500" : "bg-red-500")} />
+            <span className={cn("size-1.5 rounded-full", inStock ? "bg-primary" : "bg-destructive")} />
             {inStock ? `${gear.quantity} available` : "Out of stock"}
           </Badge>
         </div>
