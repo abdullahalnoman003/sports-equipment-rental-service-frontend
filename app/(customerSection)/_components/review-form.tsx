@@ -107,7 +107,7 @@ export function ReviewForm({ rentalId, onSubmit }: ReviewFormProps) {
                   <Star
                     className={`size-6 ${
                       s <= rating
-                        ? "fill-yellow-400 text-yellow-400"
+                        ? "fill-gold text-gold"
                         : "text-muted-foreground/30"
                     }`}
                   />

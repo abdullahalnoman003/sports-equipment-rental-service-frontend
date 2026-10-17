@@ -32,10 +32,10 @@ export default async function CustomerDashboard() {
   const pendingReturns = rentals.filter((r) => r.status === "PICKED_UP").length
 
   const stats = [
-    { label: "Active Rentals", value: String(activeCount), icon: Package, color: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300" },
-    { label: "Total Spent", value: `৳${totalSpent.toLocaleString()}`, icon: CreditCard, color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300" },
-    { label: "Pending Returns", value: String(pendingReturns), icon: Clock, color: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300" },
-    { label: "Total Orders", value: String(rentals.length), icon: TrendingUp, color: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300" },
+    { label: "Active Rentals", value: String(activeCount), icon: Package, color: "bg-slate-accent/10 text-slate-accent" },
+    { label: "Total Spent", value: `৳${totalSpent.toLocaleString()}`, icon: CreditCard, color: "bg-primary/10 text-primary" },
+    { label: "Pending Returns", value: String(pendingReturns), icon: Clock, color: "bg-gold/15 text-gold-deep" },
+    { label: "Total Orders", value: String(rentals.length), icon: TrendingUp, color: "bg-primary/10 text-primary" },
   ]
 
   const recentRentals = rentals.slice(0, 5).map((r) => ({
