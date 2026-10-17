@@ -64,7 +64,7 @@ export function GearCard({ gear }: GearCardProps) {
         {/* Price pill */}
         <div className="absolute bottom-3 left-3 rounded-xl bg-white/95 px-3 py-1.5 shadow-lg backdrop-blur-sm">
           <span className="text-lg font-bold leading-none text-black">৳{gear.price}</span>
-          <span className="text-xs font-medium text-muted-black"> /day</span>
+          <span className="text-xs font-medium text-neutral-600"> /day</span>
         </div>
 
         {/* Hover arrow */}

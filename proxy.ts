@@ -18,8 +18,10 @@ const PUBLIC_ROUTES = [
   "/contact",
   "/help",
   "/terms",
+  "/privacy",
   "/how-it-works",
   "/careers",
+  "/blog",
   "/payment/success",
   "/payment/cancel",
 ]

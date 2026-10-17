@@ -12,6 +12,8 @@
     --color-brand-foreground: var(--brand-foreground);
     --color-brand-soft: var(--brand-soft);
     --color-gold: var(--gold);
+    --color-gold-deep: var(--gold-deep);
+    --color-slate-accent: var(--slate-accent);
 
     --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
     --animate-fade-in: fade-in 0.5s ease-out both;
@@ -113,6 +115,8 @@
     --brand-foreground: oklch(0.98 0.02 160);
     --brand-soft: oklch(0.955 0.03 162.8);
     --gold: oklch(0.795 0.148 85.5);
+    --gold-deep: oklch(0.58 0.125 65);
+    --slate-accent: oklch(0.48 0.028 228);
     --sidebar: oklch(0.987 0.002 197.1);
     --sidebar-foreground: oklch(0.148 0.004 228.8);
     --sidebar-primary: oklch(0.55 0.13 162.8);
@@ -153,6 +157,8 @@
     --brand-foreground: oklch(0.16 0.02 165);
     --brand-soft: oklch(0.28 0.05 165);
     --gold: oklch(0.795 0.148 85.5);
+    --gold-deep: oklch(0.82 0.14 78);
+    --slate-accent: oklch(0.78 0.022 228);
     --sidebar: oklch(0.208 0.008 228.8);
     --sidebar-foreground: oklch(0.987 0.002 197.1);
     --sidebar-primary: oklch(0.63 0.14 162.8);
