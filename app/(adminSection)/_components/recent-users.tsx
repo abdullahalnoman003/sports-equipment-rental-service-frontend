@@ -51,7 +51,7 @@ export function RecentUsers({ users, viewAllHref = "/dashboard/admin/users" }: R
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1.5">
                 <StatusBadge status={user.role} withDot={false} className="px-2 py-0.5 text-[10px]" />
-                <span className={`text-[10px] font-semibold uppercase tracking-wide ${user.status === "ACTIVE" ? "text-emerald-600" : "text-red-600"}`}>
+                <span className={`text-[10px] font-semibold uppercase tracking-wide ${user.status === "ACTIVE" ? "text-primary" : "text-destructive"}`}>
                   {user.status}
                 </span>
               </div>

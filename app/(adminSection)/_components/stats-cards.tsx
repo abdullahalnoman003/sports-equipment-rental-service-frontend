@@ -38,7 +38,7 @@ export function StatsCards({ stats }: StatsCardsProps) {
               </div>
             </div>
             {stat.change && (
-              <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+              <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
                 {stat.change}
               </span>
             )}

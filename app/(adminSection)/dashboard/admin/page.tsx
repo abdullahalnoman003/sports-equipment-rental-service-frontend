@@ -28,10 +28,10 @@ export default async function AdminDashboard() {
   const gear = gearRes.success ? (gearRes.data as { id: string }[]) : []
 
   const stats = [
-    { label: "Total Users", value: String(users.length), icon: Users, color: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300", change: "" },
-    { label: "Active Gear", value: String(gear.length), icon: Package, color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300", change: "" },
-    { label: "Total Rentals", value: String(rentals.length), icon: CreditCard, color: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300", change: "" },
-    { label: "Revenue", value: `৳${rentals.filter((r) => r.status !== "CANCELED").reduce((sum, r) => sum + r.total_price, 0).toLocaleString()}`, icon: TrendingUp, color: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300", change: "" },
+    { label: "Total Users", value: String(users.length), icon: Users, color: "bg-slate-accent/10 text-slate-accent", change: "" },
+    { label: "Active Gear", value: String(gear.length), icon: Package, color: "bg-primary/10 text-primary", change: "" },
+    { label: "Total Rentals", value: String(rentals.length), icon: CreditCard, color: "bg-gold/15 text-gold-deep", change: "" },
+    { label: "Revenue", value: `৳${rentals.filter((r) => r.status !== "CANCELED").reduce((sum, r) => sum + r.total_price, 0).toLocaleString()}`, icon: TrendingUp, color: "bg-primary/10 text-primary", change: "" },
   ]
 
   return (

@@ -22,13 +22,13 @@ export function RentalsStats({ totals }: RentalsStatsProps) {
       </Card>
       <Card className="p-3">
         <CardContent className="text-center">
-          <p className="text-2xl font-bold text-blue-600">{totals.active}</p>
+          <p className="text-2xl font-bold text-slate-accent">{totals.active}</p>
           <p className="text-xs text-muted-foreground">Active</p>
         </CardContent>
       </Card>
       <Card className="p-3">
         <CardContent className="text-center">
-          <p className="text-2xl font-bold text-green-600">{totals.completed}</p>
+          <p className="text-2xl font-bold text-primary">{totals.completed}</p>
           <p className="text-xs text-muted-foreground">Completed</p>
         </CardContent>
       </Card>
