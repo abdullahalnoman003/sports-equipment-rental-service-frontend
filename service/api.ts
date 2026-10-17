@@ -1,4 +1,5 @@
 import type { ApiResponse } from "@/lib/types"
+import { sanitizePayload } from "@/lib/text"
 
 const BASE = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000").replace(/\/+$/, "")
 
@@ -40,7 +41,10 @@ async function api<T>(path: string, options?: ApiFetchOptions, token?: string | 
   }
 
   try {
-    return await res.json()
+    const json = await res.json()
+    // House rule: no em/en dashes on the site. Backend copy may contain them,
+    // so every string is normalised here, at the single API boundary.
+    return sanitizePayload(json)
   } catch {
     return { success: false, statusCode: res.status, message: "Invalid response from server", data: null as unknown as T }
   }

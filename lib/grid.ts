@@ -65,7 +65,7 @@ export interface FillGridResult<T> {
 
 /**
  * Trim `items` so they fill complete rows of `cols` columns.
- * Items are never duplicated or invented — anything that would leave a
+ * Items are never duplicated or invented. Anything that would leave a
  * partial trailing row is dropped.
  */
 export function fillGrid<T>(items: T[], maxCols = 4): FillGridResult<T> {
