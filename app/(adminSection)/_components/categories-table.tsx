@@ -1,8 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Plus, Pencil, Trash2 } from "lucide-react"
+import { useMemo, useState, useEffect } from "react"
+import { Plus, Pencil, Trash2, ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { useSort } from "@/components/shared/use-table-sort"
+import { SortableHead } from "@/components/shared/sortable-head"
 import {
   Table,
   TableBody,
@@ -35,13 +38,53 @@ import { friendlyError } from "@/lib/messages"
 import toast from "react-hot-toast"
 import type { Category } from "@/lib/types"
 
+const ITEMS_PER_PAGE = 10
+
 export function CategoriesTable() {
   const [categories, setCategories] = useState<Category[]>([])
+  const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null)
+  const [page, setPage] = useState(1)
+
+  const accessors = useMemo(
+    () => ({
+      name: (c: Category) => c.name ?? "",
+      description: (c: Category) => c.description ?? "",
+    }),
+    []
+  )
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return categories
+    return categories.filter(
+      (c) =>
+        c.name?.toLowerCase().includes(q) || c.description?.toLowerCase().includes(q)
+    )
+  }, [categories, search])
+
+  const { sorted, sort, toggleSort } = useSort(filtered, accessors)
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value)
+    // Filtering changes the row count, so jump back to a page that exists.
+    setPage(1)
+  }
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / ITEMS_PER_PAGE))
+  const safePage = Math.min(page, totalPages)
+  const paged = sorted.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE)
+
+  // Sorting resets to the first page so the user never lands on an empty one.
+  const sortProps = {
+    activeColumn: sort.column,
+    direction: sort.direction,
+    onToggle: (column: string) => setPage(toggleSort(column)),
+  }
 
   const loadCategories = async () => {
     try {
@@ -155,18 +198,28 @@ export function CategoriesTable() {
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
+      <div className="relative w-full sm:max-w-sm">
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search categories..."
+          value={search}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          className="pl-9"
+        />
+      </div>
+
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
         <Table className="min-w-[500px]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
+              <SortableHead label="Name" column="name" {...sortProps} />
+              <SortableHead label="Description" column="description" {...sortProps} />
               <TableHead>Image</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.map((category) => (
+            {paged.map((category) => (
               <TableRow key={category.id}>
                 <TableCell className="font-medium">{category.name}</TableCell>
                 <TableCell className="text-muted-foreground">{category.description || "N/A"}</TableCell>
@@ -205,10 +258,47 @@ export function CategoriesTable() {
         </Table>
         {categories.length === 0 && (
           <div className="py-12 text-center text-sm text-muted-foreground">
-            No categories found.
+            No categories yet. Use Add Category to create the first one.
+          </div>
+        )}
+        {categories.length > 0 && filtered.length === 0 && (
+          <div className="py-12 text-center text-sm text-muted-foreground">
+            No categories match &ldquo;{search}&rdquo;.
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {(safePage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+            {Math.min(safePage * ITEMS_PER_PAGE, sorted.length)} of {sorted.length} categories
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={safePage === 1}
+              onClick={() => setPage(safePage - 1)}
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              Page {safePage} of {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={safePage === totalPages}
+              onClick={() => setPage(safePage + 1)}
+              aria-label="Next page"
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <AlertDialog
         open={deleteTarget !== null}

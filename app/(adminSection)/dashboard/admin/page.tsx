@@ -4,9 +4,11 @@ import { DashboardLayout } from "@/components/shared/dashboard-layout"
 import { StatsCards } from "../../_components/stats-cards"
 import { RecentUsers } from "../../_components/recent-users"
 import { RecentRentals } from "../../_components/recent-rentals"
+import { ChartFrame, LineChart, PieChart } from "@/components/shared/charts/chart-kit"
 import { fetchAllUsers } from "../../_actions/users"
 import { fetchAllRentals } from "../../_actions/rentals"
 import { fetchAllGear } from "../../_actions/gear"
+import { fetchAdminAnalytics } from "../../_actions/analytics"
 import type { User, Rental } from "@/lib/types"
 
 export const dynamic = "force-dynamic"
@@ -16,11 +18,14 @@ export const metadata: Metadata = {
   description: "Monitor users, gear, rentals, and revenue across the GearUp platform.",
 }
 
+const money = (value: number) => `৳${Math.round(value).toLocaleString("en-US")}`
+
 export default async function AdminDashboard() {
-  const [usersRes, rentalsRes, gearRes] = await Promise.all([
+  const [usersRes, rentalsRes, gearRes, analytics] = await Promise.all([
     fetchAllUsers(),
     fetchAllRentals(),
     fetchAllGear(),
+    fetchAdminAnalytics(),
   ])
 
   const users = usersRes.success ? (usersRes.data as User[]) : []
@@ -48,6 +53,27 @@ export default async function AdminDashboard() {
           </p>
         </div>
         <StatsCards stats={stats} />
+
+        {analytics && (
+          <div className="grid gap-6 xl:grid-cols-2">
+            <ChartFrame
+              title="Revenue trend"
+              description="Last 6 months, cancelled rentals excluded"
+              empty={analytics.revenueSeries.every((p) => p.value === 0)}
+            >
+              <LineChart data={analytics.revenueSeries} format={money} />
+            </ChartFrame>
+
+            <ChartFrame
+              title="Rental status split"
+              description="Where orders sit in the lifecycle"
+              empty={analytics.statusSeries.length === 0}
+            >
+              <PieChart data={analytics.statusSeries} totalLabel="Orders" />
+            </ChartFrame>
+          </div>
+        )}
+
         <div className="grid gap-6 lg:grid-cols-2">
           <RecentUsers users={users.slice(0, 5)} />
           <RecentRentals rentals={rentals.slice(0, 5)} />

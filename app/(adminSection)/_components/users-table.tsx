@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/shared/status-badge"
+import { useSort } from "@/components/shared/use-table-sort"
+import { SortableHead } from "@/components/shared/sortable-head"
 import {
   Select,
   SelectContent,
@@ -42,8 +44,29 @@ export function UsersTable({ users, onToggleStatus }: UsersTableProps) {
         u.email.toLowerCase().includes(search.toLowerCase())
     )
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
-  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+  const accessors = useMemo(
+    () => ({
+      user: (u: User) => u.name ?? "",
+      email: (u: User) => u.email ?? "",
+      role: (u: User) => u.role ?? "",
+      joined: (u: User) => u.createdAt ?? "",
+      status: (u: User) => u.status ?? "",
+    }),
+    []
+  )
+
+  const { sorted, sort, toggleSort } = useSort(filtered, accessors)
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / ITEMS_PER_PAGE))
+  const safePage = Math.min(page, totalPages)
+  const paged = sorted.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE)
+
+  // Sorting resets to the first page so the user never lands on an empty one.
+  const sortProps = {
+    activeColumn: sort.column,
+    direction: sort.direction,
+    onToggle: (column: string) => setPage(toggleSort(column)),
+  }
 
   const handleSearchChange = (value: string) => {
     setSearch(value)
@@ -83,10 +106,10 @@ export function UsersTable({ users, onToggleStatus }: UsersTableProps) {
         <Table className="min-w-[600px]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>User</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead>Status</TableHead>
+              <SortableHead label="User" column="user" {...sortProps} />
+              <SortableHead label="Role" column="role" {...sortProps} />
+              <SortableHead label="Joined" column="joined" {...sortProps} />
+              <SortableHead label="Status" column="status" {...sortProps} />
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -136,25 +159,28 @@ export function UsersTable({ users, onToggleStatus }: UsersTableProps) {
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing {(page - 1) * ITEMS_PER_PAGE + 1} to {Math.min(page * ITEMS_PER_PAGE, filtered.length)} of {filtered.length} users
+            Showing {(safePage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+            {Math.min(safePage * ITEMS_PER_PAGE, sorted.length)} of {sorted.length} users
           </p>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="icon"
-              disabled={page === 1}
-              onClick={() => setPage(page - 1)}
+              disabled={safePage === 1}
+              onClick={() => setPage(safePage - 1)}
+              aria-label="Previous page"
             >
               <ChevronLeft className="size-4" />
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {page} of {totalPages}
+              Page {safePage} of {totalPages}
             </span>
             <Button
               variant="outline"
               size="icon"
-              disabled={page === totalPages}
-              onClick={() => setPage(page + 1)}
+              disabled={safePage === totalPages}
+              onClick={() => setPage(safePage + 1)}
+              aria-label="Next page"
             >
               <ChevronRight className="size-4" />
             </Button>

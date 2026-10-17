@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Search, Package, ChevronLeft, ChevronRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -16,10 +16,11 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useSort } from "@/components/shared/use-table-sort"
+import { SortableHead } from "@/components/shared/sortable-head"
 import type { Rental } from "@/lib/types"
 
 const ITEMS_PER_PAGE = 10
@@ -40,9 +41,29 @@ export function RentalsTable({ rentals }: RentalsTableProps) {
         r.user.name.toLowerCase().includes(search.toLowerCase()) ||
         r.gear.name.toLowerCase().includes(search.toLowerCase())
     )
+  const accessors = useMemo(
+    () => ({
+      customer: (r: Rental) => r.user?.name ?? "",
+      gear: (r: Rental) => r.gear?.name ?? "",
+      dates: (r: Rental) => r.start_date ?? "",
+      status: (r: Rental) => r.status ?? "",
+      total: (r: Rental) => Number(r.total_price) || 0,
+    }),
+    []
+  )
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
-  const paged = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
+  const { sorted, sort, toggleSort } = useSort(filtered, accessors)
+
+  // Sorting resets to the first page so the user never lands on an empty one.
+  const sortProps = {
+    activeColumn: sort.column,
+    direction: sort.direction,
+    onToggle: (column: string) => setPage(toggleSort(column)),
+  }
+
+
+  const totalPages = Math.ceil(sorted.length / ITEMS_PER_PAGE)
+  const paged = sorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
 
   const handleSearchChange = (value: string) => {
     setSearch(value)
@@ -86,11 +107,11 @@ export function RentalsTable({ rentals }: RentalsTableProps) {
         <Table className="min-w-[550px]">
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead>Customer</TableHead>
-              <TableHead>Gear</TableHead>
-              <TableHead>Dates</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Total</TableHead>
+              <SortableHead label="Customer" column="customer" {...sortProps} />
+              <SortableHead label="Gear" column="gear" {...sortProps} />
+              <SortableHead label="Dates" column="dates" {...sortProps} />
+              <SortableHead label="Status" column="status" {...sortProps} />
+              <SortableHead label="Total" column="total" align="right" {...sortProps} />
             </TableRow>
           </TableHeader>
           <TableBody>
