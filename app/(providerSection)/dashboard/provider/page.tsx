@@ -31,10 +31,10 @@ export default async function ProviderDashboard() {
   const orders = ordersRes.success ? (ordersRes.data as RentalWithPayment[]) : []
 
   const stats = [
-    { label: "Total Gear Listed", value: String(gear.length), icon: Package, color: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300" },
-    { label: "Active Rentals", value: String(orders.filter((o) => ["PAID", "PICKED_UP"].includes(o.status)).length), icon: Clock, color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300" },
-    { label: "Pending Orders", value: String(orders.filter((o) => o.status === "PLACED").length), icon: CreditCard, color: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300" },
-    { label: "Total Earnings", value: `৳${orders.filter((o) => o.payment?.status === "SUCCESS").reduce((sum, o) => sum + o.total_price, 0).toLocaleString()}`, icon: Store, color: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300" },
+    { label: "Total Gear Listed", value: String(gear.length), icon: Package, color: "bg-slate-accent/10 text-slate-accent" },
+    { label: "Active Rentals", value: String(orders.filter((o) => ["PAID", "PICKED_UP"].includes(o.status)).length), icon: Clock, color: "bg-primary/10 text-primary" },
+    { label: "Pending Orders", value: String(orders.filter((o) => o.status === "PLACED").length), icon: CreditCard, color: "bg-gold/15 text-gold-deep" },
+    { label: "Total Earnings", value: `৳${orders.filter((o) => o.payment?.status === "SUCCESS").reduce((sum, o) => sum + o.total_price, 0).toLocaleString()}`, icon: Store, color: "bg-primary/10 text-primary" },
   ]
 
   const recentGear = gear.slice(0, 3)

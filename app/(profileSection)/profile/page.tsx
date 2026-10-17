@@ -12,9 +12,9 @@ import { cn } from "@/lib/utils"
 import { friendlyError } from "@/lib/messages"
 
 const ROLE_META: Record<string, { label: string; className: string }> = {
-  CUSTOMER: { label: "Customer", className: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300" },
-  PROVIDER: { label: "Provider", className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300" },
-  ADMIN: { label: "Admin", className: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300" },
+  CUSTOMER: { label: "Customer", className: "bg-slate-accent/10 text-slate-accent" },
+  PROVIDER: { label: "Provider", className: "bg-primary/10 text-primary" },
+  ADMIN: { label: "Admin", className: "bg-gold/15 text-gold-deep" },
 }
 
 export default function ProfilePage() {

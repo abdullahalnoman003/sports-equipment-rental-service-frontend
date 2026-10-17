@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import { Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select"
 import { addNewGear } from "../_actions/gear"
 import { fetchAllCategories } from "@/app/(publicSection)/_actions/gear"
+import { normaliseGearImages } from "@/lib/gear-images"
 import { friendlyError } from "@/lib/messages"
 import { z } from "zod"
 import toast from "react-hot-toast"
@@ -24,7 +25,20 @@ import type { Category } from "@/lib/types"
 const gearSchema = z.object({
   name: z.string().min(1, "Gear name is required"),
   description: z.string().min(1, "Description is required"),
-  image: z.string().url("Invalid image URL").optional().or(z.literal("")),
+  image: z
+    .string()
+    .optional()
+    .or(z.literal(""))
+    .refine(
+      (value) => {
+        const parts = (value ?? "")
+          .split(",")
+          .map((p) => p.trim())
+          .filter(Boolean)
+        return parts.every((p) => /^https?:\/\/.+\..+/.test(p))
+      },
+      { message: "Enter valid image URLs separated by commas" }
+    ),
   price: z.number().positive("Price must be greater than 0"),
   quantity: z.number().int("Quantity must be a whole number").positive("Quantity must be greater than 0"),
   brand: z.string().min(1, "Brand is required"),
@@ -62,6 +76,10 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
   const [categories, setCategories] = useState<string[]>([])
   const [imageError, setImageError] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const previewImages = useMemo(
+    () => normaliseGearImages({ image: form.image }).slice(0, 4),
+    [form.image]
+  )
 
   useEffect(() => {
     async function fetchCategories() {
@@ -135,32 +153,44 @@ export function AddGearForm({ onSuccess, onCancel }: AddGearFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Image URL + Preview */}
       <div className="space-y-2">
-        <Label htmlFor="image">Image URL (optional)</Label>
+        <Label htmlFor="image">Image URLs (optional)</Label>
         <div className="flex gap-4">
           <div className="flex-1">
             <Input
               id="image"
               value={form.image}
               onChange={(e) => handleChange("image", e.target.value)}
-              placeholder="https://example.com/photo.jpg"
+              placeholder="https://example.com/photo.jpg, https://example.com/photo2.jpg"
             />
           </div>
-          <div className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-muted/50">
-            {form.image && !imageError && (form.image.startsWith("http://") || form.image.startsWith("https://")) ? (
-              <Image
-                src={form.image}
-                alt="Gear preview"
-                fill
-                className="object-cover"
-                onError={() => setImageError(true)}
-              />
+          <div className="flex shrink-0 gap-2">
+            {previewImages.length > 0 ? (
+              previewImages.map((src) => (
+                <div
+                  key={src}
+                  className="relative size-20 overflow-hidden rounded-xl border border-border bg-muted/50"
+                >
+                  <Image
+                    src={src}
+                    alt="Gear preview"
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                </div>
+              ))
             ) : (
-              <Package className="size-6 text-muted-foreground/50" />
+              <div className="flex size-20 items-center justify-center rounded-xl border border-border bg-muted/50">
+                <Package className="size-6 text-muted-foreground/50" />
+              </div>
             )}
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          Paste a direct link to your gear image (JPG, PNG, or WebP)
+          Paste direct links to your gear photos (JPG, PNG, or WebP). Separate multiple
+          photos with commas — the first becomes the cover image and the rest form the
+          gallery.
         </p>
       </div>
 
