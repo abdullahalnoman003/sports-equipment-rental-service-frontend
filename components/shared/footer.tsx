@@ -3,12 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowRight, CheckCircle2, Lock } from "lucide-react"
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaXTwitter,
-  FaLinkedinIn,
-} from "react-icons/fa6"
+import { FaFacebookF, FaGithub, FaXTwitter, FaLinkedinIn } from "react-icons/fa6"
 import { FiMapPin, FiMail, FiPhone } from "react-icons/fi"
 import { Logo } from "@/components/shared/logo"
 import { Input } from "@/components/ui/input"
@@ -40,17 +35,19 @@ const linkColumns: { title: string; links: LinkItem[] }[] = [
     title: "Company",
     links: [
       { label: "Contact", href: "/contact" },
-      { label: "Terms & Privacy", href: "/terms" },
+      { label: "Terms of Service", href: "/terms" },
+      { label: "Privacy Policy", href: "/privacy" },
       { label: "Support", href: "mailto:support@gearup.com.bd" },
     ],
   },
 ]
 
+/** Owner's real accounts, so every social link resolves somewhere valid. */
 const socials = [
-  { label: "Facebook", href: "https://facebook.com/gearupbd", Icon: FaFacebookF },
-  { label: "Instagram", href: "https://instagram.com/gearupbd", Icon: FaInstagram },
-  { label: "X (Twitter)", href: "https://x.com/gearupbd", Icon: FaXTwitter },
-  { label: "LinkedIn", href: "https://linkedin.com/company/gearupbd", Icon: FaLinkedinIn },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/abdullahalnoman003/", Icon: FaLinkedinIn },
+  { label: "GitHub", href: "https://github.com/abdullahalnoman003", Icon: FaGithub },
+  { label: "Facebook", href: "https://www.facebook.com/fb.abdullahalnoman/", Icon: FaFacebookF },
+  { label: "X", href: "https://x.com/Noman_1003", Icon: FaXTwitter },
 ]
 
 export function Footer() {

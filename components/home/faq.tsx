@@ -43,7 +43,7 @@ export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <Section id="faq" tone="plain" innerClassName="max-w-3xl">
+    <Section id="faq" tone="muted" innerClassName="max-w-3xl">
       <SectionHeading
           eyebrow="FAQ"
           title={

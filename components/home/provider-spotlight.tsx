@@ -19,7 +19,7 @@ export async function ProviderSpotlight() {
   if (visible.length === 0) return null
 
   return (
-    <Section id="providers" tone="muted">
+    <Section id="providers" tone="plain">
       <SectionHeading
           eyebrow="Provider Spotlight"
           title={

@@ -47,7 +47,7 @@ export function Newsletter() {
   }
 
   return (
-    <Section id="newsletter" tone="muted">
+    <Section id="newsletter" tone="plain">
       <div className="relative overflow-hidden rounded-[2.5rem] border border-border bg-gradient-to-br from-primary/10 via-card to-gold/10 p-7 sm:p-12">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -left-20 -top-20 size-64 rounded-full bg-primary/10 blur-3xl" />

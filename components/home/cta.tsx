@@ -6,7 +6,7 @@ import { ArrowRight, Zap, ShieldCheck, Headset } from "lucide-react"
 
 export function Cta() {
   return (
-    <Section id="cta" tone="muted" innerClassName="max-w-6xl" space="roomy">
+    <Section id="cta" tone="plain" innerClassName="max-w-6xl" space="roomy">
         <div className="relative overflow-hidden rounded-[2.5rem] px-6 py-14 text-center sm:px-16 sm:py-16">
           {/* Background image + overlay */}
           <Image

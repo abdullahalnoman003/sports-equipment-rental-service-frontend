@@ -65,7 +65,10 @@ export function Navbar({ user }: { user: ApiResponse<UserProfile> | null }) {
   const handleLogout = async () => {
     await logout()
     toast.success("Logged out successfully!")
-    router.push("/login")
+    // Send people to the public home page rather than back to the login form,
+    // so signing out never looks like being rejected.
+    router.push("/")
+    router.refresh()
     setMobileOpen(false)
   }
 

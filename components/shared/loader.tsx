@@ -1,33 +1,45 @@
 import { LogoMark } from "@/components/shared/logo"
 
+/**
+ * Calm, minimal loading state.
+ *
+ * Deliberately restrained: a soft breathing mark above a single indeterminate
+ * progress track. No spinning rings, no bouncing dots and no filler copy, all
+ * of which read as broken or distracting at the speed a route actually loads.
+ */
 export function BrandLoader({
   label = "GearUp",
-  hint = "Preparing your experience...",
+  hint,
 }: {
   label?: string
   hint?: string
 }) {
   return (
-    <div className="relative flex flex-col items-center justify-center gap-5">
-      <div className="pointer-events-none absolute -inset-10 -z-10 rounded-full bg-primary/10 blur-3xl animate-pulse-soft" />
-      <div className="relative">
-        <span className="absolute -inset-3 -z-10 rounded-full border-2 border-dashed border-primary/30 animate-spin-slow" />
-        <div className="animate-float">
-          <LogoMark className="size-14 drop-shadow-lg" />
-        </div>
+    <div className="flex flex-col items-center gap-6">
+      <div className="relative flex items-center justify-center">
+        <span className="pointer-events-none absolute size-20 rounded-full bg-primary/10 blur-2xl animate-pulse-soft" />
+        <LogoMark className="relative size-12 animate-fade-in" />
       </div>
-      <div className="flex flex-col items-center gap-1.5">
-        <div className="flex items-center gap-1.5">
-          <span className="text-sm font-semibold tracking-[0.2em] uppercase text-foreground">
+
+      <div className="flex w-40 flex-col items-center gap-3">
+        {label ? (
+          <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
             {label}
           </span>
-          <span className="flex gap-1">
-            <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:-0.2s]" />
-            <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:-0.1s]" />
-            <span className="size-1.5 animate-bounce rounded-full bg-primary" />
-          </span>
+        ) : null}
+
+        <div
+          className="h-1 w-full overflow-hidden rounded-full bg-muted"
+          role="progressbar"
+          aria-label="Loading"
+          aria-busy="true"
+        >
+          <div className="h-full w-1/3 rounded-full bg-primary animate-progress" />
         </div>
-        <p className="text-xs text-muted-foreground">{hint}</p>
+
+        {hint ? (
+          <span className="text-xs text-muted-foreground/80">{hint}</span>
+        ) : null}
       </div>
     </div>
   )

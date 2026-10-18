@@ -20,6 +20,7 @@ import {
   BookOpen,
   ChevronRight,
   Tags,
+  BarChart3,
 } from "lucide-react"
 import { Logo } from "@/components/shared/logo"
 import { logout } from "@/service/logout"
@@ -49,10 +50,12 @@ const providerLinks: SidebarLink[] = [
 
 const adminLinks: SidebarLink[] = [
   { label: "Overview", href: "/dashboard/admin", icon: LayoutDashboard },
+  { label: "Analytics", href: "/dashboard/admin/analytics", icon: BarChart3 },
   { label: "Users", href: "/dashboard/admin/users", icon: User },
   { label: "All Gear", href: "/dashboard/admin/gear", icon: Package },
   { label: "Rentals", href: "/dashboard/admin/rentals", icon: CreditCard },
   { label: "Categories", href: "/dashboard/admin/categories", icon: Tags },
+  { label: "Profile", href: "/profile", icon: User },
 ]
 
 const staticLinks: SidebarLink[] = [
@@ -61,6 +64,7 @@ const staticLinks: SidebarLink[] = [
   { label: "How It Works", href: "/how-it-works", icon: BookOpen },
   { label: "Help Center", href: "/help", icon: HelpCircle },
   { label: "Terms", href: "/terms", icon: FileText },
+  { label: "Privacy", href: "/privacy", icon: Shield },
 ]
 
 const roleIcons = { CUSTOMER: Package, PROVIDER: Store, ADMIN: Shield }
@@ -125,7 +129,9 @@ export function DashboardLayout({
     setMobileOpen(false)
     await logout()
     toast.success("Logged out successfully!")
-    router.push("/login")
+    // Land on the public home page rather than the login form.
+    router.push("/")
+    router.refresh()
   }
 
   const closeMobile = () => setMobileOpen(false)

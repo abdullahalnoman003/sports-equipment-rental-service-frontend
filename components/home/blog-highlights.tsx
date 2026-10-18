@@ -12,7 +12,7 @@ export function BlogHighlights() {
   if (posts.length === 0) return null
 
   return (
-    <Section id="blog" tone="plain">
+    <Section id="blog" tone="muted">
       <SectionHeading
           eyebrow="From the Blog"
           title={
