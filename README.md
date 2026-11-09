@@ -11,7 +11,7 @@
 [![Stripe](https://img.shields.io/badge/Stripe-Payments-635BFF?logo=stripe&logoColor=white)](https://stripe.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[Features](#features) · [Demo Credentials](#demo-credentials) · [AI Features](#ai-features) · [Getting Started](#getting-started) · [Architecture](#architecture) · [API Reference](#api-reference) · [Contributing](#contributing)
+[Features](#features) · [Demo Credentials](#demo-credentials) · [AI Features](#ai-features) · [Getting Started](#getting-started) · [Architecture](#architecture) · [API Reference](#api-reference) · [Environment Variables](#environment-variables) · [Contributing](#contributing)
 
 </div>
 
@@ -26,7 +26,14 @@ Built with **Next.js 16**, **React 19 Server Components**, and **Tailwind CSS v4
 **Gear Discovery**
 - Full-text search with real-time filtering by category, brand, and price range
 - Nine equipment categories: Cycling, Camping, Fitness, Water Sports, Hiking, Football, Cricket, Tennis, and more
-- Detailed gear pages with pricing, availability, and provider information
+- Detailed gear pages with pricing, availability, gallery, reviews, and provider information
+
+**Accounts & Access**
+- Three roles (customer, provider, admin) with role-gated dashboards
+- Route protection in `proxy.ts`: guests are redirected to login, wrong roles are redirected home
+- One-click demo sign-in for each role, with credentials resolved on the server
+- Google sign-in when `NEXT_PUBLIC_GOOGLE_CLIENT_ID` is configured
+- Profile editing with avatar, phone, and address
 
 **Rental & Payments**
 - Date-range booking with automatic daily-rate price calculation
@@ -67,7 +74,7 @@ instantly. The credentials are resolved on the server, so the browser never rece
 | Provider | `noman6@gmail.com` | `thisisasecurepassword` | Listings, incoming orders, earnings |
 | Admin | `admin@gmail.com` | `admin@123` | Full oversight, analytics, user and category management |
 
-Google sign-in is also enabled, so you can sign in with any Google account instead.
+Google sign-in also works when `NEXT_PUBLIC_GOOGLE_CLIENT_ID` is set to a client ID that matches the backend, so you can sign in with any Google account instead.
 
 These accounts are pre-seeded with real data so the dashboards are worth exploring. Do not enter
 real personal information.
@@ -92,15 +99,19 @@ cd gearup-frontend
 # Install dependencies
 pnpm install
 
-# Configure environment
+# Configure environment (`.env` and `.env.local` are both gitignored and loaded)
 cp .env.example .env.local
 ```
 
-Edit `.env.local`:
+Edit `.env.local` (or `.env`):
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
+
+`NEXT_PUBLIC_API_URL` is not in the template because the client already defaults
+to `http://localhost:5000`. The template covers demo logins, Google sign-in, and
+the optional AI provider keys; every one of them can be left blank.
 
 ### Development
 
@@ -126,6 +137,9 @@ pnpm start
 | `pnpm start` | Serve the production build |
 | `pnpm lint` | Run ESLint (flat config) |
 
+There is no test or typecheck script. `pnpm build` performs the TypeScript check,
+and `pnpm lint` is the only other verification step.
+
 ## Architecture
 
 ### Tech Stack
@@ -138,6 +152,8 @@ pnpm start
 | Styling | [Tailwind CSS v4](https://tailwindcss.com/) | Utility-first CSS with `@theme` inline configuration |
 | Components | [shadcn/ui](https://ui.shadcn.com/) | Accessible primitives built on Radix UI |
 | Payments | [Stripe](https://stripe.com/) | Checkout session creation and webhook fulfillment |
+| Route protection | `proxy.ts` | JWT role gating before render (Next.js 16 replacement for middleware) |
+| AI | Multi-provider LLM chain | Optional search suggestions, recommendations, and chat over the live catalog |
 | Icons | [Lucide React](https://lucide.dev/) | Consistent SVG icon set |
 | Validation | [Zod](https://zod.dev/) | Runtime schema validation |
 | Notifications | [React Hot Toast](https://react-hot-toast.com/) | Lightweight toast system |
@@ -147,33 +163,47 @@ pnpm start
 ```
 gearup-frontend/
 ├── app/
-│   ├── (publicSection)/           # Home, gear catalog, gear detail, about, payment result
+│   ├── (publicSection)/           # Home, gear catalog, content pages, payment result
 │   ├── (customerSection)/         # Customer dashboard, orders, payments
 │   ├── (providerSection)/         # Provider dashboard, gear management, order processing
-│   ├── (adminSection)/            # Admin dashboard, users, gear audit, categories
+│   ├── (adminSection)/            # Admin dashboard, users, gear audit, rentals, categories, analytics
 │   ├── (authentication)/          # Login, register
 │   ├── (profileSection)/          # User profile
-│   ├── layout.tsx                 # Root layout: theme provider, fonts, toaster
+│   ├── layout.tsx                 # Root layout: theme provider, Lora font, nav progress, toaster
 │   ├── globals.css                # Tailwind v4 theme tokens and custom animations
+│   ├── error.tsx                  # Global error boundary
 │   ├── not-found.tsx              # Custom 404 page
 │   └── loading.tsx                # Global loading skeleton
 │
 ├── components/
 │   ├── ui/                        # shadcn/ui primitives (button, card, dialog, table, etc.)
-│   ├── shared/                    # Navbar, footer, dashboard sidebar, theme provider
-│   └── home/                      # Hero, features, services, testimonials, FAQ, CTA
+│   ├── shared/                    # Navbar, footer, dashboard layout, chart kit, status badge
+│   ├── home/                      # Hero, stats, features, featured gear, FAQ, CTA
+│   └── ai/                        # Search suggestions, recommendation panel, chat assistant
+│
+├── content/
+│   └── blog.ts                    # Static blog posts (slug, body, metadata)
 │
 ├── lib/
 │   ├── types.ts                   # Domain models: User, Gear, Rental, Payment, Review
 │   ├── utils.ts                   # cn() class merge helper
+│   ├── text.ts                    # Dash-free text normalisation for the whole site
+│   ├── brand.ts                   # Three-accent brand palette helpers
+│   ├── grid.ts                    # Full-row grid helpers for landing sections
+│   ├── seo.ts                     # OpenGraph and metadata helpers
 │   ├── get-token.ts               # Server-side cookie token reader
-│   └── seo.ts                     # OpenGraph and metadata helpers
+│   ├── demo-accounts.ts           # Demo role list (credentials stay on the server)
+│   ├── gear-images.ts             # Multi-image normalisation for gear galleries
+│   ├── reviews.ts                 # Rating summary maths
+│   ├── charts.ts                  # Analytics series builders
+│   └── ai/                        # Multi-provider LLM chain, prompts, fallbacks
 │
 ├── service/
-│   ├── api.ts                     # Centralized fetch client with cookie injection
+│   ├── api.ts                     # Centralised fetch client with cookie injection
 │   ├── getMe.ts                   # Server action: fetch authenticated user
 │   └── logout.ts                  # Server action: clear auth cookies
 │
+├── proxy.ts                       # Route protection and role gating (Next.js 16 middleware)
 ├── public/                        # Static assets (logos, favicons)
 ├── next.config.ts                 # Remote image pattern configuration
 ├── eslint.config.mjs              # ESLint 9 flat configuration
@@ -186,7 +216,7 @@ Next.js route groups (parenthesized folders) organize code without affecting URL
 
 | Group | URL Pattern | Purpose |
 |---|---|---|
-| `(publicSection)` | `/`, `/gear`, `/gear/:id`, `/about` | Public storefront |
+| `(publicSection)` | `/`, `/gear`, `/gear/:id`, `/about`, `/blog`, `/blog/:slug`, `/contact`, `/help`, `/how-it-works`, `/careers`, `/privacy`, `/terms`, `/payment/success`, `/payment/cancel` | Public storefront and content |
 | `(customerSection)` | `/dashboard/customer/*` | Customer portal |
 | `(providerSection)` | `/dashboard/provider/*` | Provider portal |
 | `(adminSection)` | `/dashboard/admin/*` | Admin control panel |
@@ -195,8 +225,8 @@ Next.js route groups (parenthesized folders) organize code without affecting URL
 
 Each route group contains:
 - `_components/` : page-specific UI components
-- `_actions/` : server actions wrapping `service/api.ts` calls
-- `page.tsx` : thin page composing components with data
+- `_actions/` : `"use server"` functions wrapping `service/api.ts` calls
+- `page.tsx` : async server component that fetches data and composes components
 
 ### Rental Order Lifecycle
 
@@ -211,10 +241,22 @@ After a rental reaches `RETURNED`, the customer may submit a verified review (1 
 
 ### Authentication Flow
 
-1. User submits credentials via the login form
-2. Backend validates and returns JWT tokens as HTTP-only cookies (`accessToken`, `refreshToken`)
-3. Server Actions read the token from cookies via `lib/get-token.ts` and forward it to the API client
-4. The root layout fetches the current user profile server-side to render role-appropriate navigation
+1. User submits credentials via the login form, picks a one-click demo role, or signs in with Google
+2. The backend validates and returns JWT tokens; the `(authentication)` server actions store them as HTTP-only cookies (`accessToken`, `refreshToken`)
+3. The JWT payload is decoded to pick the landing dashboard: `ADMIN`, `PROVIDER`, or `CUSTOMER`
+4. Server Actions read the token from cookies via `lib/get-token.ts` and forward it to the API client
+5. Each section layout calls `getMe()` server-side to render role-appropriate navigation
+
+### Route Protection
+
+`proxy.ts` runs before every non-static request and enforces access:
+
+- **Public routes** (`/`, `/gear`, `/about`, `/blog`, `/contact`, `/help`, `/how-it-works`, `/careers`, `/privacy`, `/terms`, `/payment/*`) are open to everyone.
+- **Role routes** map `/dashboard/admin` to `ADMIN`, `/dashboard/provider` to `PROVIDER`, and `/dashboard/customer` to `CUSTOMER`.
+- **Guests** hitting any protected route are sent to `/login?redirectTo=<path>`, and are sent home if they visit `/login` or `/register` while signed in.
+- **Other routes** not listed as public require a session.
+
+`proxy.ts` only decodes the JWT payload to read the role; it does not verify the signature. The backend remains the source of truth for every protected API call. When adding a new public page, add its path to `PUBLIC_ROUTES` in `proxy.ts` or logged-out visitors will be redirected to login.
 
 ### Data Models
 
@@ -238,6 +280,7 @@ The frontend communicates with a RESTful backend through a centralized API clien
 |---|---|---|---|
 | `POST` | `/api/auth/register` | None | Create a new customer or provider account |
 | `POST` | `/api/auth/login` | None | Authenticate and receive session cookies |
+| `POST` | `/api/auth/google` | None | Sign in with a Google ID token (account created on first use) |
 | `GET` | `/api/auth/me` | Any | Retrieve authenticated user profile |
 
 ### Gear Catalog
@@ -283,6 +326,8 @@ The frontend communicates with a RESTful backend through a centralized API clien
 | `GET` | `/api/provider/orders/` | Provider | List incoming orders |
 | `PATCH` | `/api/provider/orders/:id` | Provider | Update order status |
 
+> `GET /api/provider/gear/getallgear` returns every provider's gear, not just the caller's. The provider dashboard filters by `provider_email` client-side.
+
 ### Administration
 
 | Method | Endpoint | Auth | Description |
@@ -297,7 +342,11 @@ The frontend communicates with a RESTful backend through a centralized API clien
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
 | `PUT` | `/api/profile/update-profile` | Any | Update name, avatar, phone, address |
+| `GET` | `/api/review?gear_id=:id` | None | List public reviews for a gear item |
+| `GET` | `/api/review/summary` | None | Average rating per gear, used by the listing filters |
 | `POST` | `/api/review` | Customer | Submit review for a returned rental |
+
+Reviews are only accepted for a `RETURNED` rental, and a customer may review each gear item once.
 
 ### Response Format
 
@@ -316,17 +365,23 @@ All endpoints return a consistent JSON envelope:
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `NEXT_PUBLIC_API_URL` | Yes | `http://localhost:5000` | Backend REST API base URL |
+| `NEXT_PUBLIC_API_URL` | No | `http://localhost:5000` | Backend REST API base URL (trailing slashes are stripped) |
 | `NEXT_PUBLIC_SITE_URL` | No | `http://localhost:3000` | Frontend URL for canonical and OpenGraph metadata |
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | No | none | Google Sign-In client ID. Blank hides the button |
+| `NEXT_PUBLIC_DEMO_CUSTOMER_EMAIL` / `_PASSWORD` | No | none | One-click demo customer login. Blank hides the button |
+| `NEXT_PUBLIC_DEMO_PROVIDER_EMAIL` / `_PASSWORD` | No | none | One-click demo provider login |
+| `NEXT_PUBLIC_DEMO_ADMIN_EMAIL` / `_PASSWORD` | No | none | One-click demo admin login |
 | `GEMINI_API_KEY` | No | none | AI provider 1. Blank skips it |
 | `GROQ_API_KEY` | No | none | AI provider 2. Blank skips it |
 | `OPENROUTER_API_KEY` | No | none | AI provider 3. Blank skips it |
 | `NVIDIA_API_KEY` | No | none | AI provider 4. Blank skips it |
 | `MISTRAL_API_KEY` | No | none | AI provider 5. Blank skips it |
+| `GEMINI_MODEL`, `GROQ_MODEL`, `...` | No | provider defaults | Comma-separated model override, tried in order |
 
 All five AI keys are read only in server actions, so none of them ever reach the
-browser. See [AI Features](#ai-features) for how the fallback chain works.
+browser. The demo credentials are also read server-side by `demoLoginAction`,
+even though their names carry the `NEXT_PUBLIC_` prefix. See
+[AI Features](#ai-features) for how the fallback chain works.
 
 ## AI Features
 
@@ -368,7 +423,7 @@ Providers are tried **in the order listed above**. The first that answers wins.
   provider's timeout before trying the next.
 - Each provider is capped at 20 calls per minute and identical prompts are cached
   for 10 minutes, to stay inside the free tiers.
-- The chat assistant names the provider that answered, so nothing is misattributed.
+- Which provider answered is returned by the actions but deliberately hidden in the UI, so every feature reads as one GearUp assistant rather than a third-party chatbot.
 
 ### Keeping answers on-brand
 
